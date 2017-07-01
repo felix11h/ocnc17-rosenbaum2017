@@ -52,7 +52,6 @@ dIh_ex/dt = -theta*Ih_ex + sigma * xi: volt
 Iext = NeuronGroup(1, noise_model, method='euler')
 Iext
 
-# tau_ref !!
 NErcr = NeuronGroup(Ne, model, method='euler',
                     threshold='V > V_th', reset='V = E',
                     refractory=ref_e)
