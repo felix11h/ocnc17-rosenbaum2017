@@ -7,6 +7,8 @@ from brian2 import *
 
 set_device('cpp_standalone')
 
+defaultclock.dt = 0.1*ms
+
 Ne = 1000
 Ni = 1000
 N = Ne+Ni
@@ -24,8 +26,7 @@ DelT_i = 0.5*mV
 ref_e = 1.5*ms
 ref_i = 0.5*ms
 
-sigma = 2.5*mV/(ms**0.5)
-mu = 9*mV
+sigma = 0.1*mV/(ms**0.5)
 theta = 1.*1./ms
 
 c = 0.25
@@ -36,8 +37,10 @@ j_ie = 20*mV / (N**0.5)
 j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
-m_e = N**0.5*0.015*mV
-m_i = N**0.5*0.010*mV
+print "WARNING: Using (N*10) in the noise scaling."
+print "If N =/= 1000, this will cause problems!"
+m_e = (N*10)**0.5*0.015*mV
+m_i = (N*10)**0.5*0.010*mV
 
 T = 20000*ms
 
