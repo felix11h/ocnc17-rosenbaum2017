@@ -11,10 +11,16 @@ Ne = 1000
 Ni = 1000
 N = Ne+Ni
 
-V_th = -50*mV
-E = -60*mV
 tau_e = 15*ms
 tau_i = 10*ms
+E_L  = -60*mV
+V_T  = -50*mV
+V_re = -65*mV
+V_th = -10*mV
+
+DelT_e = 2*mV 
+DelT_i = 0.5*mV
+
 ref_e = 1.5*ms
 ref_i = 0.5*ms
 
@@ -36,9 +42,11 @@ m_i = N**0.5*0.010*mV
 T = 20000*ms
 
 model='''
-tau : second (constant)
-m   : volt   (constant)
-dV/dt = 1./tau*(E-V) + 1./ms*(m+Ih_ex) + 1./tau*Ie_syn + 1./tau*Ii_syn: volt (unless refractory)
+tau  : second (constant)
+m    : volt   (constant)
+DelT : volt   (constant)
+
+dV/dt = 1/tau*(E_L-V) + 1/tau*DelT*exp((V-V_T)/DelT) + 1/ms*(m+Ih_ex) + 1/tau*Ie_syn + 1/tau*Ii_syn: volt (unless refractory)
 
 Ih_ex : volt (linked)
 
@@ -57,7 +65,7 @@ Iext = NeuronGroup(1, noise_model, method='euler')
 
 # make this one NGrp
 NGrp = NeuronGroup(N, model, method='rk4', # rk2, rk4
-                    threshold='V > V_th', reset='V = E',
+                    threshold='V > V_th', reset='V = V_re',
                     refractory='ref')
 
 NGrp.Ih_ex = linked_var(Iext,'Ih_ex')
@@ -65,10 +73,12 @@ NGrp.Ih_ex = linked_var(Iext,'Ih_ex')
 NErcr = NGrp[:Ne]
 NIrcr = NGrp[Ne:]
 
-NErcr.ref = ref_e
-NIrcr.ref = ref_i
-NErcr.tau = tau_e
-NIrcr.tau = tau_i
+NErcr.ref  = ref_e
+NIrcr.ref  = ref_i
+NErcr.tau  = tau_e
+NIrcr.tau  = tau_i
+NErcr.DelT = DelT_e
+NIrcr.DelT = DelT_i
 NErcr.m = m_e
 NIrcr.m = m_i
 
@@ -105,8 +115,8 @@ ESPKrec = SpikeMonitor(NErcr)
 ISPKrec = SpikeMonitor(NIrcr)
 
 
-NErcr.V = E
-NIrcr.V = E
+NErcr.V = V_re
+NIrcr.V = V_re
 run(T, report='text')
 
 
