@@ -67,7 +67,7 @@ Iext = NeuronGroup(1, noise_model, method='euler')
 
 
 # make this one NGrp
-NGrp = NeuronGroup(N, model, method='rk4', # rk2, rk4
+NGrp = NeuronGroup(N, model, method='rk2', # rk2, rk4
                     threshold='V > V_th', reset='V = V_re',
                     refractory='ref')
 
@@ -153,11 +153,16 @@ pl.savefig("{}_ispk.png".format(fname), dpi=300, bbox_inches='tight')
 
 from brian2tools import plot_raster
 pl.clf()
-plot_raster(ESPKrec.i, ESPKrec.t, marker=',')
+plot_raster(ESPKrec.i[(ESPKrec.t>19500*ms)&(ESPKrec.t<20000*ms)],
+            ESPKrec.t[(ESPKrec.t>19500*ms)&(ESPKrec.t<20000*ms)],
+            marker=',')
+
 pl.savefig('raster_espk.png')
 
 pl.clf()
-plot_raster(ISPKrec.i, ISPKrec.t, marker=',')
+plot_raster(ISPKrec.i[(ISPKrec.t>19500*ms)&(ISPKrec.t<20000*ms)],
+            ISPKrec.t[(ISPKrec.t>19500*ms)&(ISPKrec.t<20000*ms)],
+            marker=',')
 pl.savefig('raster_ispk.png')
 
 
