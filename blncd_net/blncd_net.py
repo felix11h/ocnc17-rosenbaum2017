@@ -1,8 +1,4 @@
 
-import matplotlib
-matplotlib.use('Agg')
-import pylab as pl
-
 from brian2 import *
 
 set_device('cpp_standalone')
@@ -39,6 +35,7 @@ j_ii = -50*mV / (N**0.5)
 
 print "WARNING: Using (N*10) in the noise scaling."
 print "If N =/= 1000, this will cause problems!"
+print "(N = {:d})".format(N)
 m_e = (N*10)**0.5*0.015*mV
 m_i = (N*10)**0.5*0.010*mV
 
@@ -111,9 +108,9 @@ S_ii.connect(**connect_EI(Ni,Ni,c))
 # S_ei.connect(p=c)
 # S_ii.connect(p=c)
 
-
 VIrec  = StateMonitor(NGrp, ['V','Ih_ex', 'Ie_syn', 'Ii_syn'],
-                      record=[0,Ne+1])
+                      record=[0,int(Ne/4), int(Ne/3),
+                              Ne+1, Ne+int(Ni/4), Ne+int(Ni/3)])
 ESPKrec = SpikeMonitor(NErcr)
 ISPKrec = SpikeMonitor(NIrcr)
 
@@ -123,55 +120,13 @@ NIrcr.V = V_re
 run(T, report='text')
 
 
-# --------------------------------------------------------------
+import os, pickle
+pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-pl.clf()
-fig, ax = pl.subplots(2,1)
-ax[0].plot(VIrec.t/second,VIrec.V[0]/mV)
-for t_spk in ESPKrec.t[ESPKrec.i==0]:
-    ax[0].plot([t_spk/second]*2, (-50, -30), color='C0')
-ax[1].plot(VIrec.t/second, VIrec.Ie_syn[0]/mV)
-ax[1].plot(VIrec.t/second, VIrec.Ii_syn[0]/mV)
+fname = "{:s}_N{:d}_T{:d}ms".format(pyname, N, int(T/ms)) 
 
-import os
-fname = os.path.splitext(os.path.basename(__file__))[0]
-pl.savefig("{}_espk.png".format(fname), dpi=300, bbox_inches='tight')
+with open("data/"+fname+".p", "wb") as pfile:
+    pickle.dump(VIrec.get_states(),pfile)
+    pickle.dump(ESPKrec.get_states(), pfile)
+    pickle.dump(ISPKrec.get_states(), pfile)
 
-
-pl.clf()
-fig, ax = pl.subplots(2,1)
-ax[0].plot(VIrec.t/second,VIrec[Ne+1].V/mV)
-for t_spk in ISPKrec.t[ISPKrec.i==1]:
-    ax[0].plot([t_spk/second]*2, (-50, -30), color='C0')
-ax[1].plot(VIrec.t/second, VIrec[Ne+1].Ie_syn/mV)
-ax[1].plot(VIrec.t/second, VIrec[Ne+1].Ii_syn/mV)
-
-import os
-fname = os.path.splitext(os.path.basename(__file__))[0]
-pl.savefig("{}_ispk.png".format(fname), dpi=300, bbox_inches='tight')
-
-
-from brian2tools import plot_raster
-pl.clf()
-plot_raster(ESPKrec.i[(ESPKrec.t>19500*ms)&(ESPKrec.t<20000*ms)],
-            ESPKrec.t[(ESPKrec.t>19500*ms)&(ESPKrec.t<20000*ms)],
-            marker=',')
-
-pl.savefig('raster_espk.png')
-
-pl.clf()
-plot_raster(ISPKrec.i[(ISPKrec.t>19500*ms)&(ISPKrec.t<20000*ms)],
-            ISPKrec.t[(ISPKrec.t>19500*ms)&(ISPKrec.t<20000*ms)],
-            marker=',')
-pl.savefig('raster_ispk.png')
-
-
-
-# from brian2tools import 
-# pl.clf()
-# pl.figure()
-# x = brian_plot(ESPKrec[)
-# pl.savefig("{}_ESPK.png".format(fname))
-# pl.clf()
-# x = brian_plot(ISPKrec)
-# pl.savefig("{}_ISPK.png".format(fname))
