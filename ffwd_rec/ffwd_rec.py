@@ -7,8 +7,8 @@ from brian2 import *
 
 set_device('cpp_standalone')
 
-Ne = 4000
-Ni = 1000
+Ne= 2000
+Ni= 500
 N = Ne+Ni
 
 tau_e = 15*ms
@@ -32,8 +32,16 @@ j_ie = 20*mV / (N**0.5)
 j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
-Nf = 562
+r_rows, r_cols = 50,50
+a_rec  =
+f_rows, f_cols = 24, 24
+a_ffwd = 
+
+
+Nf = 529
 rf = 5*Hz
+
+# http://brian2.readthedocs.io/en/2.0rc/examples/synapses.spatial_connections.html?highlight=spatial
 
 T = 20000*ms
 
@@ -52,9 +60,6 @@ dIi_syn/dt = -1/tau_syn_i * Ii_syn : volt
 ref : second (constant)
 '''
 
-noise_model='''
-dIh_ex/dt = -theta*Ih_ex + sigma * xi: volt
-'''
 
 Ffwd = PoissonGroup(Nf, rf)
 
@@ -64,8 +69,12 @@ NGrp = NeuronGroup(N, model, method='rk4', # rk2, rk4
 
 NGrp.Ih_ex = linked_var(Iext,'Ih_ex')
 
-NErcr = NGrp[:Ne]
-NIrcr = NGrp[Ne:]
+id_sample= np.zeros(N)
+id_sample[np.random.choice(np.arange(N),Ni,replace=False)]=1
+id_sample = id_sample.astype(bool)
+
+NErcr = NGrp[id_sample]
+NIrcr = NGrp[np.invert(id_sample)]
 
 NErcr.ref  = ref_e
 NIrcr.ref  = ref_i
@@ -114,50 +123,3 @@ NIrcr.V = V_re
 run(T, report='text')
 
 
-# --------------------------------------------------------------
-
-pl.clf()
-fig, ax = pl.subplots(2,1)
-ax[0].plot(VIrec.t/second,VIrec.V[0]/mV)
-for t_spk in ESPKrec.t[ESPKrec.i==0]:
-    ax[0].plot([t_spk/second]*2, (-50, -30), color='C0')
-ax[1].plot(VIrec.t/second, VIrec.Ie_syn[0]/mV)
-ax[1].plot(VIrec.t/second, VIrec.Ii_syn[0]/mV)
-
-import os
-fname = os.path.splitext(os.path.basename(__file__))[0]
-pl.savefig("{}_espk.png".format(fname), dpi=300, bbox_inches='tight')
-
-
-pl.clf()
-fig, ax = pl.subplots(2,1)
-ax[0].plot(VIrec.t/second,VIrec[Ne+1].V/mV)
-for t_spk in ISPKrec.t[ISPKrec.i==1]:
-    ax[0].plot([t_spk/second]*2, (-50, -30), color='C0')
-ax[1].plot(VIrec.t/second, VIrec[Ne+1].Ie_syn/mV)
-ax[1].plot(VIrec.t/second, VIrec[Ne+1].Ii_syn/mV)
-
-import os
-fname = os.path.splitext(os.path.basename(__file__))[0]
-pl.savefig("{}_ispk.png".format(fname), dpi=300, bbox_inches='tight')
-
-
-from brian2tools import plot_raster
-pl.clf()
-plot_raster(ESPKrec.i, ESPKrec.t, marker=',')
-pl.savefig('raster_espk.png')
-
-pl.clf()
-plot_raster(ISPKrec.i, ISPKrec.t, marker=',')
-pl.savefig('raster_ispk.png')
-
-
-
-# from brian2tools import 
-# pl.clf()
-# pl.figure()
-# x = brian_plot(ESPKrec[)
-# pl.savefig("{}_ESPK.png".format(fname))
-# pl.clf()
-# x = brian_plot(ISPKrec)
-# pl.savefig("{}_ISPK.png".format(fname))
