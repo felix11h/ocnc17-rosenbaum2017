@@ -8,8 +8,8 @@ from brian2 import *
 
 set_device('cpp_standalone')
 
-Ne= 2000
-Ni= 500
+Ne= 63**2
+Ni= 32**2
 N = Ne+Ni
 
 tau_e = 15*ms
@@ -33,8 +33,11 @@ j_ie = 20*mV / (N**0.5)
 j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
-r_nrows, r_ncols = 50,50
-a_rec  = 0.25*r_nrows
+re_nrows, re_ncols = 63,63
+ri_nrows, ri_ncols = 32,32
+assert((re_nrows**2==Ne) & (ri_nrows**2==Ni))
+
+a_rec  = 0.25
 f_rows, f_cols = 24, 24
 a_ffwd = None
 
@@ -71,22 +74,16 @@ NGrp = NeuronGroup(N, model, method=method,
                     refractory='ref')
 
 
-# id_sample= np.zeros(N).astype(bool)
-# id_sample[np.random.choice(np.arange(N),Ni,replace=False)]=True
 
-
-# assert(len(NErcr)==Ne)
-# assert(len(NIrcr)==Ni)
-
-rnd_ids = np.arange(N) 
-np.random.shuffle(rnd_ids)
-NGrp.grd_id = rnd_ids
-
-NGrp.x = 'grd_id / r_nrows'
-NGrp.y = 'grd_id % r_nrows'
 
 NErcr = NGrp[:Ne]
 NIrcr = NGrp[Ne:]
+
+NErcr.x = 'i / re_nrows'
+NErcr.y = 'i % re_nrows'
+
+NIrcr.x = '(i-Ne) / ri_nrows'
+NIrcr.y = '(i-Ne) % ri_nrows'
 
 NErcr.ref  = ref_e
 NIrcr.ref  = ref_i
@@ -100,10 +97,18 @@ S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii')
 
-t_rx = (rnd_ids[:Ne]/r_nrows + np.random.normal(0, a_rec, size=Ne)) % r_nrows
-t_ry = (rnd_ids[:Ne] % r_nrows + np.random.normal(0, a_rec, size=Ne)) % r_nrows
 
-t_ids = r_nrows*np.rint(t_rx).astype(int) + np.rint(t_ry).astype(int)
+tee_x = ((np.arange(Ne) % re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
+tee_y = ((np.arange(Ne)/re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
+
+tee_ids = (re_nrows-1)*np.rint(re_nrows*tee_x).astype(int) + np.rint(re_nrows*tee_y).astype(int)
+
+tie_x = ((np.arange(Ne) % re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
+tie_y = ((np.arange(Ne)/re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
+
+tie_ids = (ri_nrows-1)*np.rint(ri_nrows*tie_x).astype(int) + np.rint(ri_nrows*tie_y).astype(int)
+
+
 
 
 
