@@ -1,3 +1,4 @@
+# http://brian2.readthedocs.io/en/2.0rc/examples/synapses.spatial_connections.html?highlight=spatial
 
 import matplotlib
 matplotlib.use('Agg')
@@ -32,27 +33,29 @@ j_ie = 20*mV / (N**0.5)
 j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
-r_rows, r_cols = 50,50
-a_rec  =
+r_nrows, r_ncols = 50,50
+a_rec  = None
 f_rows, f_cols = 24, 24
-a_ffwd = 
-
+a_ffwd = None
 
 Nf = 529
 rf = 5*Hz
 
-# http://brian2.readthedocs.io/en/2.0rc/examples/synapses.spatial_connections.html?highlight=spatial
+method = 'rk2'
+T = 10*ms
+#T = 20000*ms
 
-T = 20000*ms
 
 model='''
+grd_id  : integer (constant)
+x      : integer (constant)
+y      : integer (constant)
+
 tau  : second (constant)
 m    : volt   (constant)
 DelT : volt   (constant)
 
-dV/dt = 1/tau*(E_L-V) + 1/tau*DelT*exp((V-V_T)/DelT) + 1/ms*(m+Ih_ex) + 1/tau*Ie_syn + 1/tau*Ii_syn: volt (unless refractory)
-
-Ih_ex : volt (linked)
+dV/dt = 1/tau*(E_L-V) + 1/tau*DelT*exp((V-V_T)/DelT) + 1/tau*Ie_syn + 1/tau*Ii_syn: volt (unless refractory)
 
 dIe_syn/dt = -1/tau_syn_e * Ie_syn : volt
 dIi_syn/dt = -1/tau_syn_i * Ii_syn : volt
@@ -63,18 +66,27 @@ ref : second (constant)
 
 Ffwd = PoissonGroup(Nf, rf)
 
-NGrp = NeuronGroup(N, model, method='rk4', # rk2, rk4
+NGrp = NeuronGroup(N, model, method=method,
                     threshold='V > V_th', reset='V = V_re',
                     refractory='ref')
 
-NGrp.Ih_ex = linked_var(Iext,'Ih_ex')
 
-id_sample= np.zeros(N)
-id_sample[np.random.choice(np.arange(N),Ni,replace=False)]=1
-id_sample = id_sample.astype(bool)
+# id_sample= np.zeros(N).astype(bool)
+# id_sample[np.random.choice(np.arange(N),Ni,replace=False)]=True
 
-NErcr = NGrp[id_sample]
-NIrcr = NGrp[np.invert(id_sample)]
+
+# assert(len(NErcr)==Ne)
+# assert(len(NIrcr)==Ni)
+
+rids = np.arange(N) 
+np.random.shuffle(rids)
+NGrp.grd_id = rids
+
+NGrp.x = 'grd_id / r_nrows'
+NGrp.y = 'grd_id % r_nrows'
+
+NErcr = NGrp[:Ne]
+NIrcr = NGrp[Ne:]
 
 NErcr.ref  = ref_e
 NIrcr.ref  = ref_i
@@ -82,8 +94,6 @@ NErcr.tau  = tau_e
 NIrcr.tau  = tau_i
 NErcr.DelT = DelT_e
 NIrcr.DelT = DelT_i
-NErcr.m = m_e
-NIrcr.m = m_i
 
 S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee')
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie')
@@ -91,35 +101,17 @@ S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii')
 
 
-
-def connect_EI(N_target, N_source, c):
-    #i=[[k]*int(c*N_target) for k in range(N_source)]
-    i = np.repeat(np.arange(N_source), int(c*N_target))    
-    j = np.random.randint(0,N_target, int(c*N_target)*N_source)
-
-    assert(len(i) == len(j))
-    assert(max(i) == N_source-1)    
-    return {'i':i,'j':j}
-
-S_ee.connect(**connect_EI(Ne,Ne,c))
-S_ie.connect(**connect_EI(Ni,Ne,c))
-S_ei.connect(**connect_EI(Ne,Ni,c))
-S_ii.connect(**connect_EI(Ni,Ni,c))
-
-# S_ee.connect(p=c)
-# S_ie.connect(p=c)
-# S_ei.connect(p=c)
-# S_ii.connect(p=c)
+# create list of connections first and the pass Brian2
 
 
-VIrec  = StateMonitor(NGrp, ['V','Ih_ex', 'Ie_syn', 'Ii_syn'],
-                      record=[0,Ne+1])
+Rrec  = StateMonitor(NGrp, ['V', 'Ie_syn', 'Ii_syn'],
+                      record=[0,Ne])
 ESPKrec = SpikeMonitor(NErcr)
 ISPKrec = SpikeMonitor(NIrcr)
 
-
 NErcr.V = V_re
 NIrcr.V = V_re
+
 run(T, report='text')
 
 
