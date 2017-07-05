@@ -39,7 +39,7 @@ print "(N = {:d})".format(N)
 m_e = (N)**0.5*0.015*mV
 m_i = (N)**0.5*0.010*mV
 
-method = 'rk2'
+method = 'rk2' # 'euler', 'rk4'
 T = 20000*ms
 
 model='''
@@ -61,7 +61,8 @@ noise_model='''
 dIex/dt = -theta*Iex + sigma * xi: volt
 '''
 
-Iext = NeuronGroup(1, noise_model, method='euler')
+Iex1 = NeuronGroup(1, noise_model, method='euler')
+Iex2 = NeuronGroup(1, noise_model, method='euler')
 
 
 # make this one NGrp
@@ -72,8 +73,8 @@ NIrcr = NeuronGroup(Ni, model, method=method,
                     threshold='V > V_th', reset='V = V_re',
                     refractory='ref')
 
-NErcr.Iex = linked_var(Iext,'Iex')
-NIrcr.Iex = linked_var(Iext,'Iex')
+NErcr.Iex = linked_var(Iex1,'Iex')
+NIrcr.Iex = linked_var(Iex2,'Iex')
 
 NErcr.ref  = ref_e
 NIrcr.ref  = ref_i
