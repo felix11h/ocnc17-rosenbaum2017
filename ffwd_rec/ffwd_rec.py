@@ -34,7 +34,7 @@ j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
 r_nrows, r_ncols = 50,50
-a_rec  = None
+a_rec  = 0.25*r_nrows
 f_rows, f_cols = 24, 24
 a_ffwd = None
 
@@ -78,9 +78,9 @@ NGrp = NeuronGroup(N, model, method=method,
 # assert(len(NErcr)==Ne)
 # assert(len(NIrcr)==Ni)
 
-rids = np.arange(N) 
-np.random.shuffle(rids)
-NGrp.grd_id = rids
+rnd_ids = np.arange(N) 
+np.random.shuffle(rnd_ids)
+NGrp.grd_id = rnd_ids
 
 NGrp.x = 'grd_id / r_nrows'
 NGrp.y = 'grd_id % r_nrows'
@@ -99,6 +99,12 @@ S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee')
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii')
+
+t_rx = (rnd_ids[:Ne]/r_nrows + np.random.normal(0, a_rec, size=Ne)) % r_nrows
+t_ry = (rnd_ids[:Ne] % r_nrows + np.random.normal(0, a_rec, size=Ne)) % r_nrows
+
+t_ids = r_nrows*np.rint(t_rx).astype(int) + np.rint(t_ry).astype(int)
+
 
 
 # create list of connections first and the pass Brian2
