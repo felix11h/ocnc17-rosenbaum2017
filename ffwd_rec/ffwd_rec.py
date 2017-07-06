@@ -25,7 +25,11 @@ DelT_i = 0.5*mV
 ref_e = 1.5*ms
 ref_i = 0.5*ms
 
-c = 0.25
+Kee = 200
+Kei = 200
+Kie = 500
+Kii = 500
+
 tau_syn_e = 8*ms 
 tau_syn_i = 4*ms
 j_ee = 12.5*mV / (N**0.5)
@@ -92,21 +96,22 @@ NIrcr.tau  = tau_i
 NErcr.DelT = DelT_e
 NIrcr.DelT = DelT_i
 
+
+tee_x = (np.repeat((np.arange(Ne) % re_nrows)/re_nrows, Kee) + np.random.normal(0, a_rec, size=Ne*Kee)) % 1
+tee_y = (np.repeat((np.arange(Ne)/re_nrows)/re_nrows, Kee) + np.random.normal(0, a_rec, size=Ne*Kee)) % 1
+tee_ids = (re_nrows-1)*np.rint(re_nrows*tee_x).astype(int) + np.rint((re_nrows-1)*tee_y).astype(int)
+print np.max(tee_ids)
+
+tie_x = ((np.arange(Ne) % re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
+tie_y = ((np.arange(Ne)/re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
+tie_ids = (ri_nrows-1)*np.rint(ri_nrows*tie_x).astype(int) + np.rint(ri_nrows*tie_y).astype(int)
+
 S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee')
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii')
 
-
-tee_x = ((np.arange(Ne) % re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
-tee_y = ((np.arange(Ne)/re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
-
-tee_ids = (re_nrows-1)*np.rint(re_nrows*tee_x).astype(int) + np.rint(re_nrows*tee_y).astype(int)
-
-tie_x = ((np.arange(Ne) % re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
-tie_y = ((np.arange(Ne)/re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
-
-tie_ids = (ri_nrows-1)*np.rint(ri_nrows*tie_x).astype(int) + np.rint(ri_nrows*tie_y).astype(int)
+S_ee.connect(i = np.repeat(np.arange(Ne),Kee), j = tee_ids)
 
 
 
