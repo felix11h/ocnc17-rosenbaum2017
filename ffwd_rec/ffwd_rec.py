@@ -102,7 +102,7 @@ S_iF.connect(i = np.repeat(np.arange(Nf),KiF),
 
 
 Rrec  = StateMonitor(NGrp, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                      record=[0,Ne])
+                      record=[0,10,250,Ne,Ne+10,Ne+250])
 ESPKrec = SpikeMonitor(NErcr)
 ISPKrec = SpikeMonitor(NIrcr)
 FSPKrec = SpikeMonitor(Ffwd)
