@@ -36,8 +36,8 @@ ri_nrows, ri_ncols = 32,32
 assert((re_nrows**2==Ne) & (ri_nrows**2==Ni))
 Kee = 200
 Kei = 200
-Kie = 500
-Kii = 500
+Kie = 50
+Kii = 50
 
 a_ffwd = 0.1
 f_nrows, f_ncols = 24, 24
