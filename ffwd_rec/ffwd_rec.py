@@ -97,27 +97,32 @@ NErcr.DelT = DelT_e
 NIrcr.DelT = DelT_i
 
 
-tee_x = (np.repeat((np.arange(Ne) % re_nrows)/re_nrows, Kee) + np.random.normal(0, a_rec, size=Ne*Kee)) % 1
-tee_y = (np.repeat((np.arange(Ne)/re_nrows)/re_nrows, Kee) + np.random.normal(0, a_rec, size=Ne*Kee)) % 1
-tee_ids = (re_nrows-1)*np.rint(re_nrows*tee_x).astype(int) + np.rint((re_nrows-1)*tee_y).astype(int)
-print np.max(tee_ids)
 
-tie_x = ((np.arange(Ne) % re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
-tie_y = ((np.arange(Ne)/re_nrows)/re_nrows + np.random.normal(0, a_rec, size=Ne)) % 1
-tie_ids = (ri_nrows-1)*np.rint(ri_nrows*tie_x).astype(int) + np.rint(ri_nrows*tie_y).astype(int)
+def get_rcr_targets(Nsrc, src_nrows, Ntar, tar_nrows, K):
+    tar_x = (np.repeat((np.arange(Nsrc) % src_nrows)/src_nrows, K)\
+             + np.random.normal(0, a_rec, size=Nsrc*K)) % 1
+    tar_y = (np.repeat((np.arange(Nsrc) / src_nrows)/src_nrows, K)\
+             + np.random.normal(0, a_rec, size=Nsrc*K)) % 1
+    ids = (tar_nrows-1)*np.rint(tar_nrows*tar_x).astype(int) \
+          + np.rint((tar_nrows-1)*tar_y).astype(int)
+    return ids
+
 
 S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee')
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii')
 
-S_ee.connect(i = np.repeat(np.arange(Ne),Kee), j = tee_ids)
+S_ee.connect(i = np.repeat(np.arange(Ne),Kee),
+             j = get_rcr_targets(Ne, re_nrows, Ne, re_nrows, Kee))
+S_ie.connect(i = np.repeat(np.arange(Ne),Kie),
+             j = get_rcr_targets(Ne, re_nrows, Ni, ri_nrows, Kie))
+S_ei.connect(i = np.repeat(np.arange(Ni),Kei),
+             j = get_rcr_targets(Ni, ri_nrows, Ne, re_nrows, Kei))
+S_ii.connect(i = np.repeat(np.arange(Ni),Kii),
+             j = get_rcr_targets(Ni, ri_nrows, Ni, ri_nrows, Kii))
 
 
-
-
-
-# create list of connections first and the pass Brian2
 
 
 Rrec  = StateMonitor(NGrp, ['V', 'Ie_syn', 'Ii_syn'],
