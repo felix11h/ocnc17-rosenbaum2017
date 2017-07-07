@@ -22,7 +22,10 @@ pl.rcParams['text.latex.preamble'] = [
     r'\sisetup{detect-all}',    # force siunitx to use the fonts
 ]  
 
+Ne = len(state['NErcr']['x'])
+Ni = len(state['NIrcr']['x'])
 
+print len(state['NErcr']['x']),  len(state['NErcr']['y']), len(np.bincount(state['S_ee']['j']))
 
 fig, ax = pl.subplots(3,2)
 fig.set_size_inches(6.,7.5)
@@ -31,7 +34,7 @@ ax[0,0].set_title('pop: NErcr, syn: NErcr')
 ax[0,0].set_aspect('equal', 'datalim')
 cm = pl.cm.get_cmap('RdYlBu')
 sc = ax[0,0].scatter(state['NErcr']['x'], state['NErcr']['y'], s=1,
-           c=np.bincount(state['S_ee']['j']), cmap=cm)
+           c=np.bincount(state['S_ee']['j'], minlength=Ne), cmap=cm)
 fig.colorbar(sc, ax=ax[0,0])
 
 
@@ -39,7 +42,7 @@ ax[0,1].set_title('pop: NIrcr, syn: NErcr')
 ax[0,1].set_aspect('equal', 'datalim')
 cm = pl.cm.get_cmap('RdYlBu')
 sc = ax[0,1].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
-           c=np.bincount(state['S_ie']['j']), cmap=cm)
+           c=np.bincount(state['S_ie']['j'], minlength=Ni), cmap=cm)
 fig.colorbar(sc, ax=ax[0,1])
 
 
@@ -47,7 +50,7 @@ ax[1,0].set_title('pop: NErcr, syn: NIrcr')
 ax[1,0].set_aspect('equal', 'datalim')
 cm = pl.cm.get_cmap('RdYlBu')
 sc = ax[1,0].scatter(state['NErcr']['x'], state['NErcr']['y'], s=1,
-           c=np.bincount(state['S_ei']['j']), cmap=cm)
+           c=np.bincount(state['S_ei']['j'], minlength=Ne), cmap=cm)
 fig.colorbar(sc, ax=ax[1,0])
 
 
@@ -55,7 +58,7 @@ ax[1,1].set_title('pop: NIrcr, syn: NIrcr')
 ax[1,1].set_aspect('equal', 'datalim')
 cm = pl.cm.get_cmap('RdYlBu')
 sc = ax[1,1].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
-           c=np.bincount(state['S_ii']['j']), cmap=cm)
+           c=np.bincount(state['S_ii']['j'], minlength=Ni), cmap=cm)
 fig.colorbar(sc, ax=ax[1,1])
 
 ax[2,0].set_title('pop: NErcr, syn: Ffwd')

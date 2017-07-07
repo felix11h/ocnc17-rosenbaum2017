@@ -47,9 +47,10 @@ f_nrows, f_ncols = 24, 24
 KeF = 1000
 KiF = 80
 
-Nf = 529
+Nf = 576
+assert(f_nrows**2==Nf)
 rf = 5*Hz
 
 method = 'rk2'
-T = 10*ms
-#T = 10000*ms
+#T = 10*ms
+T = 10000*ms

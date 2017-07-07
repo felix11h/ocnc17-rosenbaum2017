@@ -18,10 +18,13 @@ import pickle
 #with open('../data/rb_arec0.25_N50000_T10000ms_nofix.p', 'rb') as pfile:
 # with open('../data/rb_arec0.25_N50000_T10000ms.p', 'rb') as pfile:
 with open('../data/red_arec0.25_N4993_T10000ms.p', 'rb') as pfile:
-    Erec = pickle.load(pfile)
-    Irec = pickle.load(pfile)
-    espk = pickle.load(pfile)
-    ispk = pickle.load(pfile)
+
+    state = pickle.load(pfile)
+    
+    Erec = state['Erec']
+    Irec = state['Irec']
+    espk = state['ESPK']
+    ispk = state['ISPK']
 
 
 matplotlib.rc('text', usetex=True)

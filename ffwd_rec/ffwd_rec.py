@@ -54,13 +54,12 @@ NErcr.DelT = DelT_e
 NIrcr.DelT = DelT_i
 
 
-def get_rcr_targets(Nsrc, src_nrows, Ntar, tar_nrows, K):
-    tar_x = (np.repeat((np.arange(Nsrc) % src_nrows)/src_nrows, K)\
-             + np.random.normal(0, a_rec, size=Nsrc*K)) % 1
-    tar_y = (np.repeat((np.arange(Nsrc) / src_nrows)/src_nrows, K)\
-             + np.random.normal(0, a_rec, size=Nsrc*K)) % 1
-    ids = (tar_nrows-1)*np.rint(tar_nrows*tar_x).astype(int) \
-          + np.rint((tar_nrows-1)*tar_y).astype(int)
+def get_targets(a, Nsrc, src_nrows, Ntar, tar_nrows, K):
+    tar_x = (np.repeat((np.arange(Nsrc) % src_nrows)/float(src_nrows), K)\
+             + np.random.normal(0, a, size=Nsrc*K)) % 1
+    tar_y = (np.repeat((np.arange(Nsrc) / src_nrows)/float(src_nrows), K)\
+             + np.random.normal(0, a, size=Nsrc*K)) % 1
+    ids = tar_nrows*((np.rint((tar_nrows)*tar_x)).astype(int) % tar_nrows) + ((np.rint((tar_nrows)*tar_y)).astype(int) % tar_nrows)
     return ids
 
 S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee', name='S_ee')
@@ -69,31 +68,21 @@ S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei', name='S_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii', name='S_ii')
 
 S_ee.connect(i = np.repeat(np.arange(Ne),Kee),
-             j = get_rcr_targets(Ne, re_nrows, Ne, re_nrows, Kee))
+             j = get_targets(a_rec, Ne, re_nrows, Ne, re_nrows, Kee))
 S_ie.connect(i = np.repeat(np.arange(Ne),Kie),
-             j = get_rcr_targets(Ne, re_nrows, Ni, ri_nrows, Kie))
+             j = get_targets(a_rec, Ne, re_nrows, Ni, ri_nrows, Kie))
 S_ei.connect(i = np.repeat(np.arange(Ni),Kei),
-             j = get_rcr_targets(Ni, ri_nrows, Ne, re_nrows, Kei))
+             j = get_targets(a_rec, Ni, ri_nrows, Ne, re_nrows, Kei))
 S_ii.connect(i = np.repeat(np.arange(Ni),Kii),
-             j = get_rcr_targets(Ni, ri_nrows, Ni, ri_nrows, Kii))
-
-
-def get_ffwd_targets(Ntar, tar_nrows, K):
-    tar_x = (np.repeat((np.arange(Nf) % f_nrows)/f_nrows, K)\
-             + np.random.normal(0, a_ffwd, size=Nf*K)) % 1
-    tar_y = (np.repeat((np.arange(Nf) / f_nrows)/f_nrows, K)\
-             + np.random.normal(0, a_ffwd, size=Nf*K)) % 1
-    ids = (tar_nrows-1)*np.rint(tar_nrows*tar_x).astype(int) \
-          + np.rint((tar_nrows-1)*tar_y).astype(int)
-    return ids
+             j = get_targets(a_rec, Ni, ri_nrows, Ni, ri_nrows, Kii))
 
 S_eF = Synapses(Ffwd, NErcr, on_pre='If_syn_post += j_eF')
 S_iF = Synapses(Ffwd, NIrcr, on_pre='If_syn_post += j_iF')
 
 S_eF.connect(i = np.repeat(np.arange(Nf),KeF),
-             j = get_ffwd_targets(Ne, re_nrows, KeF))
+             j = get_targets(a_ffwd, Nf, f_nrows, Ne, re_nrows, KeF))
 S_iF.connect(i = np.repeat(np.arange(Nf),KiF),
-             j = get_ffwd_targets(Ni, ri_nrows, KiF))
+             j = get_targets(a_ffwd, Nf, f_nrows,  Ni, ri_nrows, KiF))
 
 
 Erec  = StateMonitor(NErcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
@@ -121,9 +110,9 @@ state = {'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
          'S_iF'  : {'j' : S_iF.get_states()['j']},
          'Erec'  : Erec.get_states(),
          'Irec'  : Irec.get_states(),
-         'ESPK ' : ESPKrec.get_states(),
-         'ISPK ' : ISPKrec.get_states(),
-         'FSPK ' : FSPKrec.get_states()}
+         'ESPK'  : ESPKrec.get_states(),
+         'ISPK'  : ISPKrec.get_states(),
+         'FSPK'  : FSPKrec.get_states()}
 
 import os, pickle
 pyname = os.path.splitext(os.path.basename(__file__))[0]
