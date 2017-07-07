@@ -30,14 +30,15 @@ ref : second (constant)
 '''
 
 
-Ffwd = PoissonGroup(Nf, rf)
+Ffwd = PoissonGroup(Nf, rf, name='Fwfd')
 
-NGrp = NeuronGroup(N, model, method=method,
+NErcr = NeuronGroup(Ne, model, method=method,
                     threshold='V > V_th', reset='V = V_re',
-                    refractory='ref')
+                    refractory='ref', name='NErcr')
+NIrcr = NeuronGroup(Ni, model, method=method,
+                    threshold='V > V_th', reset='V = V_re',
+                    refractory='ref', name='NIrcr')
 
-NErcr = NGrp[:Ne]
-NIrcr = NGrp[Ne:]
 
 NErcr.x = 'i / re_nrows'
 NErcr.y = 'i % re_nrows'
@@ -62,10 +63,10 @@ def get_rcr_targets(Nsrc, src_nrows, Ntar, tar_nrows, K):
           + np.rint((tar_nrows-1)*tar_y).astype(int)
     return ids
 
-S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee')
-S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie')
-S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei')
-S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii')
+S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee', name='S_ee')
+S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie', name='S_ie')
+S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei', name='S_ei')
+S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii', name='S_ii')
 
 S_ee.connect(i = np.repeat(np.arange(Ne),Kee),
              j = get_rcr_targets(Ne, re_nrows, Ne, re_nrows, Kee))
@@ -95,16 +96,32 @@ S_iF.connect(i = np.repeat(np.arange(Nf),KiF),
              j = get_ffwd_targets(Ni, ri_nrows, KiF))
 
 
-Rrec  = StateMonitor(NGrp, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                      record=[0,10,250,Ne,Ne+10,Ne+250])
-ESPKrec = SpikeMonitor(NErcr)
-ISPKrec = SpikeMonitor(NIrcr)
-FSPKrec = SpikeMonitor(Ffwd)
+Erec  = StateMonitor(NErcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
+                      record=[0,Ne/2,Ne-1])
+Irec  = StateMonitor(NIrcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
+                      record=[0,Ni/2,Ni-1])
+
+ESPKrec = SpikeMonitor(NErcr, name='ESPKrec')
+ISPKrec = SpikeMonitor(NIrcr, name='ISPKrec')
+FSPKrec = SpikeMonitor(Ffwd,  name='FSPKrec')
 
 NErcr.V = V_re
 NIrcr.V = V_re
 run(T, report='text')
 
+
+#netw_state = magic_network.get_states()  # too large
+state = {'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
+         'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
+         'S_ee'  : {'j' : S_ee.get_states()['j']},
+         'S_ie'  : {'j' : S_ie.get_states()['j']},
+         'S_ei'  : {'j' : S_ei.get_states()['j']},
+         'S_ii'  : {'j' : S_ii.get_states()['j']},
+         'Erec'  : Erec.get_states(),
+         'Irec'  : Irec.get_states(),
+         'ESPK ' : ESPKrec.get_states(),
+         'ISPK ' : ISPKrec.get_states(),
+         'FSPK ' : FSPKrec.get_states()}
 
 import os, pickle
 pyname = os.path.splitext(os.path.basename(__file__))[0]
@@ -112,8 +129,9 @@ pyname = os.path.splitext(os.path.basename(__file__))[0]
 fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
-    pickle.dump(Rrec.get_states(),pfile)
-    pickle.dump(ESPKrec.get_states(), pfile)
-    pickle.dump(ISPKrec.get_states(), pfile)
-    pickle.dump(FSPKrec.get_states(), pfile)
+    pickle.dump(state, pfile) 
+    # pickle.dump(Rrec.get_states(),pfile)
+    # pickle.dump(ESPKrec.get_states(), pfile)
+    # pickle.dump(ISPKrec.get_states(), pfile)
+    # pickle.dump(FSPKrec.get_states(), pfile)
 
