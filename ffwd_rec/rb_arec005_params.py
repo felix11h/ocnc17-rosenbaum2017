@@ -1,6 +1,8 @@
 
 from brian2.units import *
 
+param_set = 'rb'
+
 Ne= 40000
 Ni= 10000
 N = Ne+Ni
@@ -51,3 +53,5 @@ rf = 5*Hz
 method = 'rk2'
 #T = 10*ms
 T = 10000*ms
+
+

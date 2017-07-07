@@ -7,13 +7,7 @@ from brian2 import *
 
 import sys, importlib
 params = importlib.import_module(sys.argv[1])
-
-params_dict = params.__dict__
-try:
-    to_import = params.__all__
-except AttributeError:
-    to_import = [name for name in params_dict if not name.startswith('_')]
-globals().update({name: params_dict[name] for name in to_import})
+globals().update(params.__dict__)
 
 set_device('cpp_standalone')
 
@@ -48,7 +42,7 @@ NIrcr = NGrp[Ne:]
 NErcr.x = 'i / re_nrows'
 NErcr.y = 'i % re_nrows'
 
-NIrcr.x = '(i-Ne) / ri_nrows'
+NIrcr.x = '(i-Ne) / ri_nrows' #!!!!!
 NIrcr.y = '(i-Ne) % ri_nrows'
 
 NErcr.ref  = ref_e
@@ -115,7 +109,7 @@ run(T, report='text')
 import os, pickle
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-fname = "{:s}_N{:d}_T{:d}ms".format(pyname, N, int(T/ms)) 
+fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(Rrec.get_states(),pfile)
