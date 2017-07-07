@@ -42,8 +42,8 @@ NIrcr = NGrp[Ne:]
 NErcr.x = 'i / re_nrows'
 NErcr.y = 'i % re_nrows'
 
-NIrcr.x = '(i-Ne) / ri_nrows' #!!!!!
-NIrcr.y = '(i-Ne) % ri_nrows'
+NIrcr.x = 'i / ri_nrows' 
+NIrcr.y = 'i % ri_nrows'
 
 NErcr.ref  = ref_e
 NIrcr.ref  = ref_i
