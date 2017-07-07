@@ -24,8 +24,8 @@ pl.rcParams['text.latex.preamble'] = [
 
 
 
-fig, ax = pl.subplots(2,2)
-fig.set_size_inches(6.,5.)
+fig, ax = pl.subplots(3,2)
+fig.set_size_inches(6.,7.5)
 
 ax[0,0].set_title('pop: NErcr, syn: NErcr')
 ax[0,0].set_aspect('equal', 'datalim')
@@ -34,19 +34,22 @@ sc = ax[0,0].scatter(state['NErcr']['x'], state['NErcr']['y'], s=1,
            c=np.bincount(state['S_ee']['j']), cmap=cm)
 fig.colorbar(sc, ax=ax[0,0])
 
-ax[0,1].set_title('pop: NErcr, syn: NIrcr')
+
+ax[0,1].set_title('pop: NIrcr, syn: NErcr')
 ax[0,1].set_aspect('equal', 'datalim')
 cm = pl.cm.get_cmap('RdYlBu')
-sc = ax[0,1].scatter(state['NErcr']['x'], state['NErcr']['y'], s=1,
-           c=np.bincount(state['S_ei']['j']), cmap=cm)
+sc = ax[0,1].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
+           c=np.bincount(state['S_ie']['j']), cmap=cm)
 fig.colorbar(sc, ax=ax[0,1])
 
-ax[1,0].set_title('pop: NIrcr, syn: NErcr')
+
+ax[1,0].set_title('pop: NErcr, syn: NIrcr')
 ax[1,0].set_aspect('equal', 'datalim')
 cm = pl.cm.get_cmap('RdYlBu')
-sc = ax[1,0].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
-           c=np.bincount(state['S_ie']['j']), cmap=cm)
+sc = ax[1,0].scatter(state['NErcr']['x'], state['NErcr']['y'], s=1,
+           c=np.bincount(state['S_ei']['j']), cmap=cm)
 fig.colorbar(sc, ax=ax[1,0])
+
 
 ax[1,1].set_title('pop: NIrcr, syn: NIrcr')
 ax[1,1].set_aspect('equal', 'datalim')
@@ -55,6 +58,19 @@ sc = ax[1,1].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
            c=np.bincount(state['S_ii']['j']), cmap=cm)
 fig.colorbar(sc, ax=ax[1,1])
 
+ax[2,0].set_title('pop: NErcr, syn: Ffwd')
+ax[2,0].set_aspect('equal', 'datalim')
+cm = pl.cm.get_cmap('RdYlBu')
+sc = ax[2,0].scatter(state['NErcr']['x'], state['NErcr']['y'], s=1,
+           c=np.bincount(state['S_eF']['j']), cmap=cm)
+fig.colorbar(sc, ax=ax[2,0])
+
+ax[2,1].set_title('pop: NIrcr, syn: Ffwd')
+ax[2,1].set_aspect('equal', 'datalim')
+cm = pl.cm.get_cmap('RdYlBu')
+sc = ax[2,1].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
+           c=np.bincount(state['S_iF']['j']), cmap=cm)
+fig.colorbar(sc, ax=ax[2,1])
 
 
 
