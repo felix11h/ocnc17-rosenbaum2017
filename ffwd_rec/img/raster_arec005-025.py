@@ -45,7 +45,7 @@ size = 400
 tmin = 9000*ms
 tmax = 10000*ms
 
-state = state025
+state = state005
 espk = state['ESPK']
 ispk = state['ISPK']
 
@@ -65,10 +65,10 @@ ax[0].plot(ispk_t, ispk_id + size,
 ax[0].margins(0.0)
 ax[0].set_xlabel('t [ms]')
 ax[0].set_ylabel('index i')
-ax[0].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
+ax[0].set_title(r'$\alpha_{\mathrm{rec}} = 0.05$')
 
 
-state = state005
+state = state025
 espk = state['ESPK']
 ispk = state['ISPK']
 
@@ -93,7 +93,7 @@ ax[1].plot(ispk_t, ispk_id + size,
 ax[1].margins(0.0)
 ax[1].set_xlabel('t [ms]')
 ax[1].set_ylabel('index i')
-ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.05$')
+ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
 
 pl.tight_layout()
 fig.savefig('raster_rnd_{:s}.png'.format(mode), dpi=300)
@@ -109,7 +109,7 @@ size = 400
 tmin = 9000*ms
 tmax = 10000*ms
 
-state = state025
+state = state005
 espk = state['ESPK']
 ispk = state['ISPK']
 
@@ -128,10 +128,10 @@ ax[0].plot(ispk_t, ispk_id + size,
 ax[0].margins(0.0)
 ax[0].set_xlabel('t [ms]')
 ax[0].set_ylabel('index i')
-ax[0].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
+ax[0].set_title(r'$\alpha_{\mathrm{rec}} = 0.05$')
 
 
-state = state005
+state = state025
 espk = state['ESPK']
 ispk = state['ISPK']
 
@@ -155,7 +155,7 @@ ax[1].plot(ispk_t, ispk_id + size,
 ax[1].margins(0.0)
 ax[1].set_xlabel('t [ms]')
 ax[1].set_ylabel('index i')
-ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.05$')
+ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
 
 pl.tight_layout()
 fig.savefig('raster_firstN_{:s}.png'.format(mode), dpi=300)
