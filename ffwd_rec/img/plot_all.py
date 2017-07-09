@@ -7,17 +7,19 @@ import matplotlib.pyplot as pl
 import numpy as np
 from brian2.units import *
 
-import pickle
+import pickle,sys
 
-# with open('../data/blncd_net_N2000_T20000ms.p', 'rb') as pfile:
-#     vi = pickle.load(pfile)
-#     espk = pickle.load(pfile)
-#     ispk = pickle.load(pfile)
+large=False
+if sys.argv[1]=='large':
+    fname005 = "rb_arec0.05_N50000_T10000ms"
+    fname025 = "rb_arec0.25_N50000_T10000ms"
+    large=True
+else:
+    fname005 = "red_arec0.05_N4993_T10000ms"
+    fname025 = "red_arec0.25_N4993_T10000ms"
 
-#with open('../data/ffwd_rec_N4993_T10000ms.p', 'rb') as pfile:
-#with open('../data/rb_arec0.25_N50000_T10000ms_nofix.p', 'rb') as pfile:
-# with open('../data/rb_arec0.25_N50000_T10000ms.p', 'rb') as pfile:
-with open('../data/red_arec0.25_N4993_T10000ms.p', 'rb') as pfile:
+
+with open('../data/'+fname025+'.p', 'rb') as pfile:
 
     state = pickle.load(pfile)
     
@@ -40,7 +42,7 @@ pl.rcParams['text.latex.preamble'] = [
 fig,ax = pl.subplots(2,1)
 fig.set_size_inches(5,5.5)
 
-Ts = 9500*ms
+Ts = 5000*ms
 k = 1
 
 ax[0].set_xlabel('t [s]')
@@ -76,7 +78,7 @@ ax[1].legend(bbox_to_anchor=(0., 1.01, 1., .101),
 
 
 pl.tight_layout(h_pad=3.25)
-fig.savefig('name.png', dpi=300) #bbox_inches='tight')
+fig.savefig('sn.png', dpi=300) #bbox_inches='tight')
 
 
 
@@ -100,25 +102,29 @@ ax[0].margins(0.0)
 ax[0].set_xlabel('t [ms]')
 ax[0].set_ylabel('index i')
 
-# tmin = 19900*ms
+with open('../data/'+fname005+'.p', 'rb') as pfile:
 
-# ax[1].plot((Erec['t'][Erec['t']>tmin]-tmin)/ms,
-#            Erec['Iex'][Erec['t']>tmin]/mV,
-#            color='blue')
-# ax[1].plot((Irec['t'][Irec['t']>tmin]-tmin)/ms,
-#            Irec['Iex'][Irec['t']>tmin]/mV,
-#            color='red')
+    state = pickle.load(pfile)
+    
+    Erec = state['Erec']
+    Irec = state['Irec']
+    espk = state['ESPK']
+    ispk = state['ISPK']
 
-# ax[1].set_xlabel('t [ms]')
-# ax[1].set_ylabel('external input [mV]')
+
+ax[1].plot((espk['t'][(espk['t']>tmin) & (espk['i']<iN)]-tmin)/ms,
+        espk['i'][(espk['t']>tmin) & (espk['i']<iN)],
+        '.', color='blue', markersize=.5)
+ax[1].plot((ispk['t'][(ispk['t']>tmin) & (ispk['i']<iN)]-tmin)/ms,
+        iN+ispk['i'][(ispk['t']>tmin) & (ispk['i']<iN)],
+        '.', color='red', markersize=.5)
+
+ax[1].margins(0.0)
+ax[1].set_xlabel('t [ms]')
+ax[1].set_ylabel('index i')
 
 pl.tight_layout()
-fig.savefig('new.png', dpi=300)
+fig.savefig('raster.png', dpi=300)
 
-
-# --------------------------------------
-
-#load synapse S_ee, load NErcr
-pl.scatter(NErcr.x, NErcr.y, s=1, c=np.bincount(S_ee.j))
 
 

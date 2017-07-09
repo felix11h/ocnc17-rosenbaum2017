@@ -37,7 +37,7 @@ fig.colorbar(sc, ax=ax[0,0])
 
 ax[0,1].set_title('pop: NIrcr, syn: NErcr')
 ax[0,1].set_aspect('equal', 'datalim')
-cm = pl.cm.get_cmap('RdYlBu')
+cm = pl.cm.get_cmap('RdYlBu') #virids
 sc = ax[0,1].scatter(state['NIrcr']['x'], state['NIrcr']['y'], s=10,
            c=np.bincount(state['S_ie']['j']), cmap=cm)
 fig.colorbar(sc, ax=ax[0,1])
