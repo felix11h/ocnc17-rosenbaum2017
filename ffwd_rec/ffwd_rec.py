@@ -9,7 +9,13 @@ import sys, importlib
 params = importlib.import_module(sys.argv[1])
 globals().update(params.__dict__)
 
+# put imports abave (as much as possible) into the separate processes ()
+
+# directory argument for multiprocessing: directory=None
 set_device('cpp_standalone')
+
+# prefs.codegen.target = 'auto' (default) Order: 1. Weave, 2. Cython 3. Numpy
+# Don't use Weave!
 
 model='''
 grd_id  : integer (constant)
@@ -114,7 +120,8 @@ state = {'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
          'ISPK'  : ISPKrec.get_states(),
          'FSPK'  : FSPKrec.get_states()}
 
-import os, pickle
+import cPickle as pickle
+import os
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
 fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms".format(param_set, a_rec, N, int(T/ms)) 
