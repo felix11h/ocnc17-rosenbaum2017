@@ -7,7 +7,8 @@ import matplotlib.pyplot as pl
 import numpy as np
 from brian2.units import *
 
-import pickle,sys
+import cPickle as pickle
+import sys
 
 
 if sys.argv[1]=='large':
@@ -42,22 +43,23 @@ state = state005
 Erec = state['Erec']
 
 burn_t = 2000*ms
-bins = 200
-n_traces = 3
+bins = 500
+ntraces_low = 0
+ntraces_high = 1
 
-Ie_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV for k in range(n_traces)])
+Ie_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV for k in range(ntraces_low, ntraces_high)])
 
 f, edges = np.histogram(Ie_syn, bins=bins, density=True)
 bcs = 0.5*(edges[1:]+edges[:-1])
 ax[0].plot(bcs, f, linewidth=3)
 
-Ii_syn = np.concatenate([Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(n_traces)])
+Ii_syn = np.concatenate([Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(ntraces_low, ntraces_high)])
 
 f, edges = np.histogram(Ii_syn, bins=bins, density=True)
 bcs = 0.5*(edges[1:]+edges[:-1])
 ax[0].plot(bcs, f, linewidth=3)
 
-Iall_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV+Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(n_traces)])
+Iall_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV+Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(ntraces_low, ntraces_high)])
 
 f, edges = np.histogram(Iall_syn, bins=bins, density=True)
 bcs = 0.5*(edges[1:]+edges[:-1])
@@ -79,19 +81,19 @@ burn_t = 2000*ms
 bins = 500
 n_traces = 3
 
-Ie_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV for k in range(n_traces)])
+Ie_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV for k in range(ntraces_low, ntraces_high)])
 
 f, edges = np.histogram(Ie_syn, bins=bins, density=True)
 bcs = 0.5*(edges[1:]+edges[:-1])
 ax[1].plot(bcs, f, linewidth=3)
 
-Ii_syn = np.concatenate([Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(n_traces)])
+Ii_syn = np.concatenate([Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(ntraces_low, ntraces_high)])
 
 f, edges = np.histogram(Ii_syn, bins=bins, density=True)
 bcs = 0.5*(edges[1:]+edges[:-1])
 ax[1].plot(bcs, f, linewidth=3)
 
-Iall_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV+Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(n_traces)])
+Iall_syn = np.concatenate([Erec['Ie_syn'][:,k][Erec['t']>burn_t]/mV+Erec['If_syn'][:,k][Erec['t']>burn_t]/mV+Erec['Ii_syn'][:,k][Erec['t']>burn_t]/mV for k in range(ntraces_low, ntraces_high)])
 
 f, edges = np.histogram(Iall_syn, bins=bins, density=True)
 bcs = 0.5*(edges[1:]+edges[:-1])
