@@ -92,39 +92,41 @@ S_iF.connect(i = np.repeat(np.arange(Nf),KiF),
 
 
 Erec  = StateMonitor(NErcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                      record=[0,Ne/2,Ne-1])
+                     record=np.random.choice(np.arange(Ne), 100, replace=False))
 Irec  = StateMonitor(NIrcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                      record=[0,Ni/2,Ni-1])
+                     record=np.random.choice(np.arange(Ni), 100, replace=False))
 
 ESPKrec = SpikeMonitor(NErcr, name='ESPKrec')
 ISPKrec = SpikeMonitor(NIrcr, name='ISPKrec')
 FSPKrec = SpikeMonitor(Ffwd,  name='FSPKrec')
 
-NErcr.V = V_re
-NIrcr.V = V_re
+NErcr.V = np.random.unifrom(V_re, V_th, size=Ne)
+NIrcr.V = np.random.unifrom(V_re, V_th, size=Ni)
 run(T, report='text')
 
 
-#netw_state = magic_network.get_states()  # too large
-state = {'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
-         'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
-         'S_ee'  : {'j' : S_ee.get_states()['j']},
-         'S_ie'  : {'j' : S_ie.get_states()['j']},
-         'S_ei'  : {'j' : S_ei.get_states()['j']},
-         'S_ii'  : {'j' : S_ii.get_states()['j']},
-         'S_eF'  : {'j' : S_eF.get_states()['j']},
-         'S_iF'  : {'j' : S_iF.get_states()['j']},
+# netw_state = magic_network.get_states()  # too large
+# improvement: can pass argument to get_states
+state = {# 'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
+         # 'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
+         # 'S_ee'  : {'j' : S_ee.get_states()['j']},
+         # 'S_ie'  : {'j' : S_ie.get_states()['j']},
+         # 'S_ei'  : {'j' : S_ei.get_states()['j']},
+         # 'S_ii'  : {'j' : S_ii.get_states()['j']},
+         # 'S_eF'  : {'j' : S_eF.get_states()['j']},
+         # 'S_iF'  : {'j' : S_iF.get_states()['j']},
          'Erec'  : Erec.get_states(),
          'Irec'  : Irec.get_states(),
-         'ESPK'  : ESPKrec.get_states(),
-         'ISPK'  : ISPKrec.get_states(),
-         'FSPK'  : FSPKrec.get_states()}
+         # 'ESPK'  : ESPKrec.get_states(),
+         # 'ISPK'  : ISPKrec.get_states(),
+         # 'FSPK'  : FSPKrec.get_states()
+}
 
 import cPickle as pickle
 import os
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms".format(param_set, a_rec, N, int(T/ms)) 
+fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms_Vonly".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(state, pfile) 
