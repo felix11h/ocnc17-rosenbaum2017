@@ -100,8 +100,8 @@ ESPKrec = SpikeMonitor(NErcr, name='ESPKrec')
 ISPKrec = SpikeMonitor(NIrcr, name='ISPKrec')
 FSPKrec = SpikeMonitor(Ffwd,  name='FSPKrec')
 
-NErcr.V = np.random.uniform(V_re, V_th, size=Ne)
-NIrcr.V = np.random.uniform(V_re, V_th, size=Ni)
+NErcr.V = np.random.uniform(V_re, V_th, size=Ne)*mV
+NIrcr.V = np.random.uniform(V_re, V_th, size=Ni)*mV
 run(T, report='text')
 
 
