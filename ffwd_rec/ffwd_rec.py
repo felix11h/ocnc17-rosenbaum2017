@@ -12,7 +12,7 @@ globals().update(params.__dict__)
 # put imports abave (as much as possible) into the separate processes ()
 
 # directory argument for multiprocessing: directory=None
-set_device('cpp_standalone')
+set_device('cpp_standalone', directory=None)
 
 # prefs.codegen.target = 'auto' (default) Order: 1. Weave, 2. Cython 3. Numpy
 # Don't use Weave!
@@ -92,9 +92,9 @@ S_iF.connect(i = np.repeat(np.arange(Nf),KiF),
 
 
 Erec  = StateMonitor(NErcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                     record=np.random.choice(np.arange(Ne), 100, replace=False))
+                     record=np.random.choice(np.arange(Ne), 10, replace=False))
 Irec  = StateMonitor(NIrcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                     record=np.random.choice(np.arange(Ni), 100, replace=False))
+                     record=np.random.choice(np.arange(Ni), 10, replace=False))
 
 ESPKrec = SpikeMonitor(NErcr, name='ESPKrec')
 ISPKrec = SpikeMonitor(NIrcr, name='ISPKrec')
@@ -130,8 +130,4 @@ fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms_Vonly".format(param_set, a_rec, N, int(T/
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(state, pfile) 
-    # pickle.dump(Rrec.get_states(),pfile)
-    # pickle.dump(ESPKrec.get_states(), pfile)
-    # pickle.dump(ISPKrec.get_states(), pfile)
-    # pickle.dump(FSPKrec.get_states(), pfile)
 
