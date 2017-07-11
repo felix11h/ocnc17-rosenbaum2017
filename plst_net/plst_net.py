@@ -110,14 +110,9 @@ S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii', name='S_ii')
 
 i = np.repeat(np.arange(Ne),Kee)
 j = get_targets(a_rec, Ne, re_nrows, Ne, re_nrows, Kee)
-i = list(i)
-j = list(j)
-for k,l in enumerate(i):    
-    if l == j[k]:
-        del i[k]
-        del j[k]
-i = np.array(i)
-j = np.array(j)
+bool_ij = i!=j
+i=i[bool_ij]
+j=j[bool_ij]
 assert(np.any(i==j)==False)
 S_ee.connect(i=i, j=j)
 
@@ -128,14 +123,9 @@ S_ei.connect(i = np.repeat(np.arange(Ni),Kei),
 
 i = np.repeat(np.arange(Ni),Kii)
 j = get_targets(a_rec, Ni, ri_nrows, Ni, ri_nrows, Kii)
-i = list(i)
-j = list(j)
-for k,l in enumerate(i):    
-    if l == j[k]:
-        del i[k]
-        del j[k]
-i = np.array(i)
-j = np.array(j)
+bool_ij = i!=j
+i=i[bool_ij]
+j=j[bool_ij]
 assert(np.any(i==j)==False)
 S_ii.connect(i=i,j=j)
     
