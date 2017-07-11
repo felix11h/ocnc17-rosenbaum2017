@@ -32,6 +32,11 @@ j_ii = -400*mV / (N**0.5)
 j_eF = 120*mV / (N**0.5)
 j_iF = 120*mV / (N**0.5)
 
+Aplus = 15*mV / (N**0.5)
+Aminus = -7.5*mV / (N**0.5)
+Wpre_tau = 15*ms
+Wpost_tau = 30*ms
+
 a_rec  = 0.05
 re_nrows, re_ncols = 63,63
 ri_nrows, ri_ncols = 32,32
@@ -52,5 +57,5 @@ assert(f_nrows**2==Nf)
 rf = 5*Hz
 
 method = 'rk2'
-#T = 10*ms
-T = 10000*ms
+T = 100*ms
+#T = 50000*ms
