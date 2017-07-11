@@ -83,12 +83,19 @@ NIrcr.tau  = tau_i
 NErcr.DelT = DelT_e
 NIrcr.DelT = DelT_i
 
+def norm_hole(mu,a,abs_min):
+    x = 0
+    while abs(x) < abs_min:
+        x = np.random.normal(mu,a)
+    return x
 
 def get_targets(a, Nsrc, src_nrows, Ntar, tar_nrows, K):
+    nnx = np.array([norm_hole(0,a,1./(tar_nrows-1)) for k in range(Nsrc*K)])
     tar_x = (np.repeat((np.arange(Nsrc) % src_nrows)/float(src_nrows), K)\
-             + np.random.normal(0, a, size=Nsrc*K)) % 1
+             + nnx) % 1
+    nny = np.array([norm_hole(0,a,1./(tar_nrows-1)) for k in range(Nsrc*K)])
     tar_y = (np.repeat((np.arange(Nsrc) / src_nrows)/float(src_nrows), K)\
-             + np.random.normal(0, a, size=Nsrc*K)) % 1
+             + nny) % 1
     ids = tar_nrows*((np.rint((tar_nrows)*tar_x)).astype(int) % tar_nrows) + ((np.rint((tar_nrows)*tar_y)).astype(int) % tar_nrows)
     return ids
 
@@ -101,14 +108,37 @@ S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie', name='S_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei', name='S_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii', name='S_ii')
 
-S_ee.connect(i = np.repeat(np.arange(Ne),Kee),
-             j = get_targets(a_rec, Ne, re_nrows, Ne, re_nrows, Kee))
+i = np.repeat(np.arange(Ne),Kee)
+j = get_targets(a_rec, Ne, re_nrows, Ne, re_nrows, Kee)
+i = list(i)
+j = list(j)
+for k,l in enumerate(i):    
+    if l == j[k]:
+        del i[k]
+        del j[k]
+i = np.array(i)
+j = np.array(j)
+assert(np.any(i==j)==False)
+S_ee.connect(i=i, j=j)
+
 S_ie.connect(i = np.repeat(np.arange(Ne),Kie),
              j = get_targets(a_rec, Ne, re_nrows, Ni, ri_nrows, Kie))
 S_ei.connect(i = np.repeat(np.arange(Ni),Kei),
              j = get_targets(a_rec, Ni, ri_nrows, Ne, re_nrows, Kei))
-S_ii.connect(i = np.repeat(np.arange(Ni),Kii),
-             j = get_targets(a_rec, Ni, ri_nrows, Ni, ri_nrows, Kii))
+
+i = np.repeat(np.arange(Ni),Kii)
+j = get_targets(a_rec, Ni, ri_nrows, Ni, ri_nrows, Kii)
+i = list(i)
+j = list(j)
+for k,l in enumerate(i):    
+    if l == j[k]:
+        del i[k]
+        del j[k]
+i = np.array(i)
+j = np.array(j)
+assert(np.any(i==j)==False)
+S_ii.connect(i=i,j=j)
+    
 
 S_eF = Synapses(Ffwd, NErcr, on_pre='If_syn_post += j_eF')
 S_iF = Synapses(Ffwd, NIrcr, on_pre='If_syn_post += j_iF')
@@ -167,7 +197,7 @@ import cPickle as pickle
 import os
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-fname = "plst_net_{:s}_arec{:.2f}_N{:d}_T{:d}ms_scaling".format(param_set, a_rec, N, int(T/ms)) 
+fname = "plst_net_{:s}_arec{:.2f}_N{:d}_T{:d}ms_stdphom_selfrm".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(state, pfile) 
