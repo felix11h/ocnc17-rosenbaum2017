@@ -37,7 +37,7 @@ Aminus = -7.5*mV / (N**0.5)
 Wpre_tau = 15*ms
 Wpost_tau = 30*ms
 
-a_rec  = 0.05
+a_rec  = 0.25
 re_nrows, re_ncols = 63,63
 ri_nrows, ri_ncols = 32,32
 assert((re_nrows**2==Ne) & (ri_nrows**2==Ni))

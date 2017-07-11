@@ -14,7 +14,6 @@ globals().update(params.__dict__)
 # directory argument for multiprocessing: directory=None
 set_device('cpp_standalone', directory=None, build_on_run=False)
 
-
 # prefs.codegen.target = 'auto' (default) Order: 1. Weave, 2. Cython 3. Numpy
 # Don't use Weave!
 
@@ -58,8 +57,8 @@ w = clip(w+Wpre, 0*mV, 10*mV)
 '''
 
 regular_model='''
+w = w*(Wee_total/Wsum_post)
 '''
-
 
 Ffwd = PoissonGroup(Nf, rf, name='Fwfd')
 
@@ -95,7 +94,7 @@ def get_targets(a, Nsrc, src_nrows, Ntar, tar_nrows, K):
 
 S_ee = Synapses(NErcr, NErcr, model=syn_model, on_pre=pre_model, on_post=post_model, name='S_ee')
 S_ee.summed_updaters['Wsum_post']._clock = Clock(dt=10*ms)
-S_ee.run_regularly('w = w/Wsum_post*mV', dt = 10*ms, when='end')
+S_ee.run_regularly(regular_model, dt = 10*ms, when='end')
 
 
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie', name='S_ie')
@@ -148,10 +147,10 @@ device.build() #needs directory argument?
 
 # netw_state = magic_network.get_states()  # too large
 # improvement: can pass argument to get_states
-state = {# 'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
-         # 'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
+state = {'NErcr' : NErcr.get_states(['x','y']),
+         'NIrcr' : NIrcr.get_states(['x','y']),
          'SEERec': SEERec.get_states(),
-         'S_ee'  : {'w' : S_ee.get_states()['w']},
+         'S_ee'  : S_ee.get_states(['i','j','w']),
          # 'S_ie'  : {'j' : S_ie.get_states()['j']},
          # 'S_ei'  : {'j' : S_ei.get_states()['j']},
          # 'S_ii'  : {'j' : S_ii.get_states()['j']},
@@ -159,8 +158,8 @@ state = {# 'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
          # 'S_iF'  : {'j' : S_iF.get_states()['j']},
          'Erec'  : Erec.get_states(),
          'Irec'  : Irec.get_states(),
-         # 'ESPK'  : ESPKrec.get_states(),
-         # 'ISPK'  : ISPKrec.get_states(),
+         'ESPK'  : ESPKrec.get_states(),
+         'ISPK'  : ISPKrec.get_states(),
          # 'FSPK'  : FSPKrec.get_states()
 }
 
