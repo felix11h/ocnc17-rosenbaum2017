@@ -12,7 +12,8 @@ globals().update(params.__dict__)
 # put imports abave (as much as possible) into the separate processes ()
 
 # directory argument for multiprocessing: directory=None
-set_device('cpp_standalone', directory=None)
+set_device('cpp_standalone', directory=None, build_on_run=False)
+
 
 # prefs.codegen.target = 'auto' (default) Order: 1. Weave, 2. Cython 3. Numpy
 # Don't use Weave!
@@ -33,6 +34,30 @@ dIi_syn/dt = -1/tau_syn_i * Ii_syn : volt
 dIf_syn/dt = -1/tau_syn_f * If_syn : volt
 
 ref : second (constant)
+
+Wsum : volt 
+'''
+
+syn_model='''
+w : volt
+dWpre/dt=-Wpre/Wpre_tau : volt (event-driven)
+dWpost/dt=-Wpost/Wpost_tau : volt (event-driven)
+
+Wsum_post = w : volt (summed)
+'''
+
+pre_model='''
+Ie_syn_post += w
+Wpre += Aplus
+w = clip(w+Wpost, 0*mV, 10*mV)
+'''
+
+post_model='''
+Wpost += Aminus
+w = clip(w+Wpre, 0*mV, 10*mV) 
+'''
+
+regular_model='''
 '''
 
 
@@ -68,7 +93,11 @@ def get_targets(a, Nsrc, src_nrows, Ntar, tar_nrows, K):
     ids = tar_nrows*((np.rint((tar_nrows)*tar_x)).astype(int) % tar_nrows) + ((np.rint((tar_nrows)*tar_y)).astype(int) % tar_nrows)
     return ids
 
-S_ee = Synapses(NErcr, NErcr, on_pre='Ie_syn_post += j_ee', name='S_ee')
+S_ee = Synapses(NErcr, NErcr, model=syn_model, on_pre=pre_model, on_post=post_model, name='S_ee')
+S_ee.summed_updaters['Wsum_post']._clock = Clock(dt=10*ms)
+S_ee.run_regularly('w = w/Wsum_post*mV', dt = 10*ms, when='end')
+
+
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie', name='S_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei', name='S_ei')
 S_ii = Synapses(NIrcr, NIrcr, on_pre='Ii_syn_post += j_ii', name='S_ii')
@@ -91,25 +120,38 @@ S_iF.connect(i = np.repeat(np.arange(Nf),KiF),
              j = get_targets(a_ffwd, Nf, f_nrows,  Ni, ri_nrows, KiF))
 
 
+S_ee.w = j_ee
+
+
 Erec  = StateMonitor(NErcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                     record=np.random.choice(np.arange(Ne), 10, replace=False))
+                     record=np.random.choice(np.arange(Ne), 1, replace=False))
 Irec  = StateMonitor(NIrcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
-                     record=np.random.choice(np.arange(Ni), 10, replace=False))
+                     record=np.random.choice(np.arange(Ni), 1, replace=False))
 
 ESPKrec = SpikeMonitor(NErcr, name='ESPKrec')
 ISPKrec = SpikeMonitor(NIrcr, name='ISPKrec')
 FSPKrec = SpikeMonitor(Ffwd,  name='FSPKrec')
 
+
+SEERec = StateMonitor(S_ee, ['w'], record=np.random.choice(np.arange(Ne*Kee-1), 5, replace=False), dt=5*ms)
+
+
 NErcr.V = np.random.uniform(V_re, V_th, size=Ne)*mV
 NIrcr.V = np.random.uniform(V_re, V_th, size=Ni)*mV
-run(T, report='text')
 
+
+# check custom stuff
+print(scheduling_summary())
+
+run(T, report='text')
+device.build() #needs directory argument?
 
 # netw_state = magic_network.get_states()  # too large
 # improvement: can pass argument to get_states
 state = {# 'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
          # 'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
-         # 'S_ee'  : {'j' : S_ee.get_states()['j']},
+         'SEERec': SEERec.get_states(),
+         'S_ee'  : {'w' : S_ee.get_states()['w']},
          # 'S_ie'  : {'j' : S_ie.get_states()['j']},
          # 'S_ei'  : {'j' : S_ei.get_states()['j']},
          # 'S_ii'  : {'j' : S_ii.get_states()['j']},
@@ -126,7 +168,7 @@ import cPickle as pickle
 import os
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms_Vonly".format(param_set, a_rec, N, int(T/ms)) 
+fname = "plst_net_{:s}_arec{:.2f}_N{:d}_T{:d}ms_scaling".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(state, pfile) 
