@@ -18,12 +18,12 @@ import sys
 #     st025_010 = pickle.load(pfile)
 #     st025_010.update({'a_rec': 0.25, 'a_ffwd': 0.10})
 
-# with open('../data/plst_net_red_arec0.10_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
-#     st010_020 = pickle.load(pfile)
-#     st010_020.update({'a_rec': 0.10, 'a_ffwd': 0.20})
-# with open('../data/plst_net_red_arec0.50_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
-#     st050_020 = pickle.load(pfile)
-#     st050_020.update({'a_rec': 0.50, 'a_ffwd': 0.20})
+with open('../data/plst_net_red_arec0.10_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+    st010_020 = pickle.load(pfile)
+    st010_020.update({'a_rec': 0.10, 'a_ffwd': 0.20})
+with open('../data/plst_net_red_arec0.50_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+    st050_020 = pickle.load(pfile)
+    st050_020.update({'a_rec': 0.50, 'a_ffwd': 0.20})
     
 # with open('../data/plst_net_red_arec0.10_affwd0.15_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
 #     st010_015 = pickle.load(pfile)
@@ -44,7 +44,7 @@ pl.rcParams['text.latex.preamble'] = [
 
 
 
-def make_figure(sets):
+def make_figure(sets, fname):
     
     fig,ax = pl.subplots(1,1)
     fig.set_size_inches(5.,3.5)
@@ -76,7 +76,7 @@ def make_figure(sets):
     ax.xaxis.set_ticks_position('bottom')
 
     pl.tight_layout()
-    fig.savefig('set1.png', dpi=300) #bbox_inches='tight')
+    fig.savefig('weight_dist_{:s}.png'.format(fname), dpi=300) #bbox_inches='tight')
 
 
 
@@ -84,7 +84,10 @@ def make_figure(sets):
 
 if __name__ == '__main__':
 
-    make_figure([st005_010])
-
+    #make_figure([st005_010, st025_010], '005-010_025_10')
+    make_figure([st010_020, st050_020], '010-020_050_20')
+    #make_figure([st010_015, st030_015], '010-015_030_15')
+    
+    # make_figure([st005_010, st025_010, st010_020, st050_020, st010_015, st030_015], 'all')
 
 
