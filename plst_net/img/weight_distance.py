@@ -84,10 +84,10 @@ def make_figure(sets, fname):
 
 if __name__ == '__main__':
 
-    #make_figure([st005_010, st025_010], '005-010_025_10')
+    make_figure([st005_010, st025_010], '005-010_025_10')
     make_figure([st010_020, st050_020], '010-020_050_20')
-    #make_figure([st010_015, st030_015], '010-015_030_15')
+    make_figure([st010_015, st030_015], '010-015_030_15')
     
-    # make_figure([st005_010, st025_010, st010_020, st050_020, st010_015, st030_015], 'all')
+    make_figure([st005_010, st025_010, st010_020, st050_020, st010_015, st030_015], 'all')
 
 
