@@ -83,21 +83,15 @@ NIrcr.tau  = tau_i
 NErcr.DelT = DelT_e
 NIrcr.DelT = DelT_i
 
-def norm_hole(mu,a,abs_min):
-    x = 0
-    while abs(x) < abs_min:
-        x = np.random.normal(mu,a)
-    return x
 
 def get_targets(a, Nsrc, src_nrows, Ntar, tar_nrows, K):
-    nnx = np.array([norm_hole(0,a,1./(tar_nrows-1)) for k in range(Nsrc*K)])
     tar_x = (np.repeat((np.arange(Nsrc) % src_nrows)/float(src_nrows), K)\
-             + nnx) % 1
-    nny = np.array([norm_hole(0,a,1./(tar_nrows-1)) for k in range(Nsrc*K)])
+             + np.random.normal(0, a, size=Nsrc*K)) % 1
     tar_y = (np.repeat((np.arange(Nsrc) / src_nrows)/float(src_nrows), K)\
-             + nny) % 1
+             + np.random.normal(0, a, size=Nsrc*K)) % 1
     ids = tar_nrows*((np.rint((tar_nrows)*tar_x)).astype(int) % tar_nrows) + ((np.rint((tar_nrows)*tar_y)).astype(int) % tar_nrows)
     return ids
+
 
 S_ee = Synapses(NErcr, NErcr, model=syn_model, on_pre=pre_model, on_post=post_model, name='S_ee')
 S_ee.summed_updaters['Wsum_post']._clock = Clock(dt=10*ms)
