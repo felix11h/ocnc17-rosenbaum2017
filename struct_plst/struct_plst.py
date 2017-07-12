@@ -32,27 +32,47 @@ ref : second (constant)
 Wsum : volt 
 '''
 
+# can't write dP/dt when P is (shared)
+# update (shared) at beginning of a clock
 syn_model='''
 w : volt
 dWpre/dt=-Wpre/Wpre_tau : volt (event-driven)
 dWpost/dt=-Wpost/Wpost_tau : volt (event-driven)
 
 Wsum_post = w : volt (summed)
+
+active : integer 
+P : 1 (shared)
 '''
 
 pre_model='''
-Ie_syn_post += w
+Ie_syn_post += int(active)*w
 Wpre += Aplus
-w = clip(w+Wpost, 0*mV, 10*mV)
+w = clip(w+int(active)*Wpost, 0*mV, 10*mV)
 '''
 
 post_model='''
 Wpost += Aminus
-w = clip(w+Wpre, 0*mV, 10*mV) 
+w = clip(w+int(active)*Wpre, 0*mV, 10*mV) 
 '''
 
 regular_model='''
 w = w*(Wee_total/Wsum_post)
+'''
+
+# rand() == uniform(0,1)
+struct_model='''
+r = rand()
+should_stay_active = (w > pruning_threshold)
+should_become_active = (r < P)
+was_active_before = active
+active = int(active==1) * int(should_stay_active) + int(active==0) * int(should_become_active)'''
+
+
+print 'Weights are not inserted at insertion weight yet! Fix this before doing anything else!'
+insertion_mech=
+'''
+w = w*was_active_before*active + w_insertion*was_not_active_before*active 
 '''
 
 Ffwd = PoissonGroup(Nf, rf, name='Fwfd')
@@ -82,6 +102,7 @@ NIrcr.DelT = DelT_i
 S_ee = Synapses(NErcr, NErcr, model=syn_model, on_pre=pre_model, on_post=post_model, name='S_ee')
 S_ee.summed_updaters['Wsum_post']._clock = Clock(dt=10*ms)
 S_ee.run_regularly(regular_model, dt = 10*ms, when='end')
+S_ee.run_regularly(struct_model, dt = 1*ms, when='end')
 
 S_ie = Synapses(NErcr, NIrcr, on_pre='Ie_syn_post += j_ie', name='S_ie')
 S_ei = Synapses(NIrcr, NErcr, on_pre='Ii_syn_post += j_ei', name='S_ei')
@@ -100,6 +121,7 @@ S_iF.connect(p=0.1)
 
 
 S_ee.w = j_ee
+S_ee.P = P
 
 Erec  = StateMonitor(NErcr, ['V', 'Ie_syn', 'Ii_syn', 'If_syn'],
                      record=np.random.choice(np.arange(Ne), 1, replace=False))
@@ -121,7 +143,9 @@ NIrcr.V = np.random.uniform(V_re, V_th, size=Ni)*mV
 print(scheduling_summary())
 
 run(T, report='text')
-device.build() #needs directory argument?
+device.build(directory=None) #needs directory argument?
+
+print(profiling_summary())
 
 state = {# 'NErcr' : NErcr.get_states(['x','y']),
          # 'NIrcr' : NIrcr.get_states(['x','y']),

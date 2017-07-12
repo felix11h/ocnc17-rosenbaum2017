@@ -59,5 +59,8 @@ assert(f_nrows**2==Nf)
 rf = 5*Hz
 
 method = 'rk2'
-T = 10*ms#0000*ms
+T = 1000*ms#0000*ms
 #T = 50000*ms
+
+P = 0.01
+pruning_threshold = 40*mV / (N**0.5)/12.
