@@ -33,9 +33,10 @@ j_ie = 20*mV / (N**0.5)
 j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
-print "WARNING: Using (N*10) in the noise scaling."
-print "If N =/= 1000, this will cause problems!"
-print "(N = {:d})".format(N)
+print("WARNING: Using (N*10) in the noise scaling.")
+print("If N =/= 1000, this will cause problems!")
+print("(N = {:d})".format(N))
+
 m_e = (N)**0.5*0.015*mV
 m_i = (N)**0.5*0.010*mV
 
