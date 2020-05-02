@@ -1,5 +1,9 @@
 
 ** About
+Brian 2 neural network simulations written as an educational project during the [[https://groups.oist.jp/ocnc/oist-computational-neuroscience-course-ocnc2017][OIST Computational Neuroscience Course]] in Okinawa, Japan. The networks partially reproduce and extend results from 
+#+BEGIN_SRC 
+Rosenbaum, Robert, et al. "The spatial structure of correlated neuronal variability." Nature neuroscience 20.1 (2017): 107.
+#+END_SRC
 
 ** Requirements
 To run the network simulation a Python 3 environment with Brian 2 is required. A recommended way of installing the dependencies is for example using virtualenv and pip:
