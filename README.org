@@ -1,0 +1,33 @@
+
+** About
+
+** Requirements
+To run the network simulation a Python 3 environment with Brian 2 is required. A recommended way of installing the dependencies is for example using virtualenv and pip:
+
+#+BEGIN_SRC sh
+#!/bin/sh
+
+virtualenv -p python3 /home/$USER/env/ocnc-net
+source /home/$USER/env/ocnc-net/bin/activate
+
+pip install brian2
+pip install matplotlib
+#+END_SRC
+
+
+** Network models
+
+*** Balanced network  
+In ~blncd_net~ a balanced network driven by external Ornstein-Uhlenbeck noisy currents is simulated. 
+
+Run 
+: source run.sh
+
+
+
+
+
+
+
+
+
