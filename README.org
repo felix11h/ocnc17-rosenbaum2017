@@ -24,11 +24,17 @@ pip install matplotlib
 ** Network models
 
 *** Balanced network  
-In ~blncd_net~ a balanced network driven by external Ornstein-Uhlenbeck noisy currents is simulated. 
+In ~blncd_net~ a balanced network driven by external Ornstein-Uhlenbeck noisy currents is simulated. This is an (incomplete) attempt to reproduce Figure 1 of Rosenbaum et al. (2017). 
 
-Run 
+Run the simulation via
 : source run.sh
 
+In ~blncd_net/img/~ the following output is expected
+
+#+html: <p align="center"><img src="https://github.com/felix11h/ocnc17-rosenbaum2017/blob/master/blncd_net/img/collated_preview.png" /></p>
+
+
+*** Feedforward network
 
 
 
