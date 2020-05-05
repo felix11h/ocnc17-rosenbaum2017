@@ -14,6 +14,9 @@ globals().update(params.__dict__)
 # directory argument for multiprocessing: directory=None
 set_device('cpp_standalone', directory=None)
 
+seed(1234)
+np.random.seed(1234)
+
 # prefs.codegen.target = 'auto' (default) Order: 1. Weave, 2. Cython 3. Numpy
 # Don't use Weave!
 
@@ -107,26 +110,26 @@ run(T, report='text')
 
 # netw_state = magic_network.get_states()  # too large
 # improvement: can pass argument to get_states
-state = {# 'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
-         # 'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
-         # 'S_ee'  : {'j' : S_ee.get_states()['j']},
-         # 'S_ie'  : {'j' : S_ie.get_states()['j']},
-         # 'S_ei'  : {'j' : S_ei.get_states()['j']},
-         # 'S_ii'  : {'j' : S_ii.get_states()['j']},
-         # 'S_eF'  : {'j' : S_eF.get_states()['j']},
-         # 'S_iF'  : {'j' : S_iF.get_states()['j']},
+state = {'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
+         'NIrcr' : {k:NIrcr.get_states()[k] for k in ['x','y']},
+         'S_ee'  : {'j' : S_ee.get_states()['j']},
+         'S_ie'  : {'j' : S_ie.get_states()['j']},
+         'S_ei'  : {'j' : S_ei.get_states()['j']},
+         'S_ii'  : {'j' : S_ii.get_states()['j']},
+         'S_eF'  : {'j' : S_eF.get_states()['j']},
+         'S_iF'  : {'j' : S_iF.get_states()['j']},
          'Erec'  : Erec.get_states(),
          'Irec'  : Irec.get_states(),
-         # 'ESPK'  : ESPKrec.get_states(),
-         # 'ISPK'  : ISPKrec.get_states(),
-         # 'FSPK'  : FSPKrec.get_states()
+         'ESPK'  : ESPKrec.get_states(),
+         'ISPK'  : ISPKrec.get_states(),
+         'FSPK'  : FSPKrec.get_states()
 }
 
-import cPickle as pickle
-import os
+
+import pickle, os
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms_Vonly".format(param_set, a_rec, N, int(T/ms)) 
+fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms_full".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(state, pfile) 
