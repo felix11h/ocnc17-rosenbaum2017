@@ -3,24 +3,23 @@ from brian2 import *
 
 set_device('cpp_standalone')
 
+seed(1234)
+np.random.seed(1234)
+
 defaultclock.dt = 0.1*ms
 
-Ne = 1000
-Ni = 1000
+Ne, Ni = 1000, 1000
 N = Ne+Ni
 
-tau_e = 15*ms
-tau_i = 10*ms
+tau_e, tau_i = 15*ms, 10*ms
+
 E_L  = -60*mV
 V_T  = -50*mV
 V_re = -65*mV
 V_th = -10*mV
 
-DelT_e = 2*mV 
-DelT_i = 0.5*mV
-
-ref_e = 1.5*ms
-ref_i = 0.5*ms
+DelT_e, DelT_i = 2*mV, 0.5*mV
+ref_e, ref_i = 1.5*ms, 0.5*ms
 
 sigma = 0.1*mV/(ms**0.5)
 theta = 1.*1./ms
@@ -33,9 +32,10 @@ j_ie = 20*mV / (N**0.5)
 j_ei = -50*mV / (N**0.5)
 j_ii = -50*mV / (N**0.5)
 
-print "WARNING: Using (N*10) in the noise scaling."
-print "If N =/= 1000, this will cause problems!"
-print "(N = {:d})".format(N)
+print("WARNING: Using (N*10) in the noise scaling.")
+print("If N =/= 1000, this will cause problems!")
+print("(N = {:d})".format(N))
+
 m_e = (N)**0.5*0.015*mV
 m_i = (N)**0.5*0.010*mV
 
@@ -43,23 +43,23 @@ method = 'rk2' # 'euler', 'rk4'
 T = 20000*ms
 
 model='''
-tau  : second (constant)
-m    : volt   (constant)
-DelT : volt   (constant)
+      tau  : second (constant)
+      m    : volt   (constant)
+      DelT : volt   (constant)
 
-dV/dt = 1/tau*(E_L-V) + 1/tau*DelT*exp((V-V_T)/DelT) + 1/ms*(m+Iex) + 1/tau*Ie_syn + 1/tau*Ii_syn: volt (unless refractory)
+      dV/dt = 1/tau*(E_L-V) + 1/tau*DelT*exp((V-V_T)/DelT) 
+              + 1/ms*(m+Iex) + 1/tau*Ie_syn 
+              + 1/tau*Ii_syn: volt (unless refractory)
 
-Iex : volt (linked)
-
-dIe_syn/dt = -1/tau_syn_e * Ie_syn : volt
-dIi_syn/dt = -1/tau_syn_i * Ii_syn : volt
-
-ref : second (constant)
-'''
+      Iex : volt (linked)
+      dIe_syn/dt = -1/tau_syn_e * Ie_syn : volt
+      dIi_syn/dt = -1/tau_syn_i * Ii_syn : volt
+      ref : second (constant)
+      '''
 
 noise_model='''
-dIex/dt = -theta*Iex + sigma * xi: volt
-'''
+            dIex/dt = -theta*Iex + sigma * xi: volt
+            '''
 
 Iex1 = NeuronGroup(1, noise_model, method='euler')
 Iex2 = NeuronGroup(1, noise_model, method='euler')
@@ -68,7 +68,8 @@ Iex2 = NeuronGroup(1, noise_model, method='euler')
 # make this one NGrp
 NErcr = NeuronGroup(Ne, model, method=method,
                     threshold='V > V_th', reset='V = V_re',
-                    refractory='ref')
+                    refractory='ref') 
+
 NIrcr = NeuronGroup(Ni, model, method=method,
                     threshold='V > V_th', reset='V = V_re',
                     refractory='ref')

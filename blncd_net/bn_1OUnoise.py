@@ -112,7 +112,7 @@ S_ii.connect(**connect_EI(Ni,Ni,c))
 
 Erec  = StateMonitor(NErcr, ['V','Iex', 'Ie_syn', 'Ii_syn'],
                       record=[0,int(Ne/4), int(Ne/3)])
-Irec  = StateMonitor(NErcr, ['V','Iex', 'Ie_syn', 'Ii_syn'],
+Irec  = StateMonitor(NIrcr, ['V','Iex', 'Ie_syn', 'Ii_syn'],
                       record=[0,int(Ne/4), int(Ne/3)])
 ESPKrec = SpikeMonitor(NErcr)
 ISPKrec = SpikeMonitor(NIrcr)
