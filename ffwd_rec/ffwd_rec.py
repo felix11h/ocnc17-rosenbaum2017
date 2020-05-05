@@ -46,10 +46,10 @@ NIrcr = NeuronGroup(Ni, model, method=method,
                     refractory='ref', name='NIrcr')
 
 
-NErcr.x = 'i / re_nrows'
+NErcr.x = 'i // re_nrows'
 NErcr.y = 'i % re_nrows'
 
-NIrcr.x = 'i / ri_nrows' 
+NIrcr.x = 'i // ri_nrows' 
 NIrcr.y = 'i % ri_nrows'
 
 NErcr.ref  = ref_e
