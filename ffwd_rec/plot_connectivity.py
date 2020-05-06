@@ -9,7 +9,7 @@ from brian2.units import *
 
 import pickle
 
-with open('../data/red_arec0.25_N4993_T10ms.p', 'rb') as pfile:
+with open('data/red_arec0.25_N4993_T10000ms.p', 'rb') as pfile:
     state = pickle.load(pfile)
     
 
@@ -25,7 +25,7 @@ pl.rcParams['text.latex.preamble'] = [
 Ne = len(state['NErcr']['x'])
 Ni = len(state['NIrcr']['x'])
 
-print len(state['NErcr']['x']),  len(state['NErcr']['y']), len(np.bincount(state['S_ee']['j']))
+print(len(state['NErcr']['x']),  len(state['NErcr']['y']), len(np.bincount(state['S_ee']['j'])))
 
 fig, ax = pl.subplots(3,2)
 fig.set_size_inches(6.,7.5)
@@ -77,8 +77,8 @@ fig.colorbar(sc, ax=ax[2,1])
 
 
 
-pl.tight_layout()
-fig.savefig('new5.png', dpi=300)
+fig.tight_layout()
+fig.savefig('img/plot_connectivty.png', dpi=300)
 
 
 

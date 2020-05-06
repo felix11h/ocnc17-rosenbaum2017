@@ -29,10 +29,10 @@ pl.rcParams['text.latex.preamble'] = [
     r'\sisetup{detect-all}',    
 ]  
 
-with open('../data/'+fname025+'.p', 'rb') as pfile:
+with open('data/'+fname025+'.p', 'rb') as pfile:
     state025 = pickle.load(pfile)
 
-with open('../data/'+fname005+'.p', 'rb') as pfile:
+with open('data/'+fname005+'.p', 'rb') as pfile:
     state005 = pickle.load(pfile)
 
 
@@ -95,8 +95,8 @@ ax[1].set_xlabel('t [ms]')
 ax[1].set_ylabel('index i')
 ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
 
-pl.tight_layout()
-fig.savefig('raster_rnd_{:s}.png'.format(mode), dpi=300)
+fig.tight_layout()
+fig.savefig('img/raster_rnd_{:s}.png'.format(mode), dpi=300)
 
 
 
@@ -157,5 +157,5 @@ ax[1].set_xlabel('t [ms]')
 ax[1].set_ylabel('index i')
 ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
 
-pl.tight_layout()
-fig.savefig('raster_firstN_{:s}.png'.format(mode), dpi=300)
+fig.tight_layout()
+fig.savefig('img/raster_firstN_{:s}.png'.format(mode), dpi=300)

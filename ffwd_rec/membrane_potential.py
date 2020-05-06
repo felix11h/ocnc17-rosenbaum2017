@@ -6,8 +6,8 @@ import matplotlib.pyplot as pl
 import numpy as np
 from brian2.units import *
 
-import cPickle as pickle
-import sys
+import sys, pickle
+
 
 
 if sys.argv[1]=='large':
@@ -15,7 +15,7 @@ if sys.argv[1]=='large':
     fname025 = "rb_arec0.25_N50000_T10000ms"
     mode = 'large'
 elif sys.argv[1]=='faulty':
-    print "Attention! Using faulty data!"
+    print("Attention! Using faulty data!")
     fname005 = "red_arec0.05_N4993_T10000ms_Vonly_faulty"
     fname025 = "red_arec0.25_N4993_T10000ms_Vonly_faulty"
     mode = 'faulty'
@@ -33,10 +33,10 @@ pl.rcParams['text.latex.preamble'] = [
     r'\sisetup{detect-all}',    
 ]  
 
-with open('../data/'+fname025+'.p', 'rb') as pfile:
+with open('data/'+fname025+'.p', 'rb') as pfile:
     state025 = pickle.load(pfile)
 
-with open('../data/'+fname005+'.p', 'rb') as pfile:
+with open('data/'+fname005+'.p', 'rb') as pfile:
     state005 = pickle.load(pfile)
 
     
@@ -102,8 +102,8 @@ for j,axs in enumerate(ax):
 
 ax[0].set_title(r'$\alpha_{\text{rec}} = 0.05$')
         
-pl.tight_layout(h_pad=1.25)
-fig.savefig('memV_arec005_{:s}.png'.format(mode), dpi=300) #bbox_inches='tight')
+fig.tight_layout(h_pad=1.25)
+fig.savefig('img/memV_arec005_{:s}.png'.format(mode), dpi=300) #bbox_inches='tight')
 
 
 
@@ -172,5 +172,5 @@ for j,axs in enumerate(ax):
 
 ax[0].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
         
-pl.tight_layout(h_pad=1.25)
-fig.savefig('memV_arec025_{:s}.png'.format(mode), dpi=300) #bbox_inches='tight')
+fig.tight_layout(h_pad=1.25)
+fig.savefig('img/memV_arec025_{:s}.png'.format(mode), dpi=300) #bbox_inches='tight')

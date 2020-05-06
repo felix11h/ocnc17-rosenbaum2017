@@ -1,6 +1,6 @@
 
 ** About
-Brian 2 neural network simulations written as an educational project during the [[https://groups.oist.jp/ocnc/oist-computational-neuroscience-course-ocnc2017][OIST Computational Neuroscience Course]] in Okinawa, Japan. The networks partially reproduce and extend results from 
+Brian 2 neural network simulations written as an educational project during the [[https://groups.oist.jp/ocnc/oist-computational-neuroscience-course-ocnc2017][OIST Computational Neuroscience Course]] in Okinawa, Japan. The networks aim to reproduce and extend results from 
 #+BEGIN_SRC 
 Rosenbaum, Robert, et al. "The spatial structure of 
 correlated neuronal variability." 
@@ -34,7 +34,16 @@ In ~blncd_net/img/~ the following output is expected
 #+html: <p align="center"><img src="https://github.com/felix11h/ocnc17-rosenbaum2017/blob/master/blncd_net/img/collated_preview.png" /></p>
 
 
-*** Feedforward network
+*** Feedforward-recurrent network
+In ~ffwd_rec~ a recurrent network with neuron distributed on a grid are driven by spatially distributed feedforward input similar to Figure 2-4 in Rosenbaum et al. (2017).
+
+Run the simulation via
+: source run.sh
+
+In ~ffwd_rec/img/~ the following output is expected
+#+html: <p align="center"><img src="https://github.com/felix11h/ocnc17-rosenbaum2017/blob/master/ffwd_rec/img/collated_preview.png" /></p>
+
+
 
 
 

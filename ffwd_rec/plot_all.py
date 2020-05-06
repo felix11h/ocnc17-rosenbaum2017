@@ -19,7 +19,7 @@ else:
     fname025 = "red_arec0.25_N4993_T10000ms"
 
 
-with open('../data/'+fname025+'.p', 'rb') as pfile:
+with open('data/'+fname025+'.p', 'rb') as pfile:
 
     state = pickle.load(pfile)
     
@@ -78,7 +78,7 @@ ax[1].legend(bbox_to_anchor=(0., 1.01, 1., .101),
 
 
 pl.tight_layout(h_pad=3.25)
-fig.savefig('sn.png', dpi=300) #bbox_inches='tight')
+fig.savefig('img/sn.png', dpi=300) #bbox_inches='tight')
 
 
 
@@ -102,7 +102,7 @@ ax[0].margins(0.0)
 ax[0].set_xlabel('t [ms]')
 ax[0].set_ylabel('index i')
 
-with open('../data/'+fname005+'.p', 'rb') as pfile:
+with open('data/'+fname005+'.p', 'rb') as pfile:
 
     state = pickle.load(pfile)
     
@@ -123,8 +123,8 @@ ax[1].margins(0.0)
 ax[1].set_xlabel('t [ms]')
 ax[1].set_ylabel('index i')
 
-pl.tight_layout()
-fig.savefig('raster.png', dpi=300)
+fig.tight_layout()
+fig.savefig('img/raster.png', dpi=300)
 
 
 

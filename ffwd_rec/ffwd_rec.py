@@ -129,7 +129,7 @@ state = {'NErcr' : {k:NErcr.get_states()[k] for k in ['x','y']},
 import pickle, os
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
-fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms_full".format(param_set, a_rec, N, int(T/ms)) 
+fname = "{:s}_arec{:.2f}_N{:d}_T{:d}ms".format(param_set, a_rec, N, int(T/ms)) 
 
 with open("data/"+fname+".p", "wb") as pfile:
     pickle.dump(state, pfile) 
