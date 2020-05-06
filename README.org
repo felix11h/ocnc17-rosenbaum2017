@@ -54,8 +54,16 @@ In ~plst_net/img/~ the following output is expected
 #+html: <p align="center"><img src="https://github.com/felix11h/ocnc17-rosenbaum2017/blob/master/plst_net/img/collated_preview.png" /></p>
 
 
-
 *** Structurally plastic feedforward-recurrent network 
+Lastly, in ~struct_plast~ the model is further extended to include structural plasticity in which connection between neuron rewire over time. 
+
+The ~struct_plst.py~ file gives an idea how structural plasticity (which is not at the moment natively supported) can be implemented in Brian 2. 
+
+The network simulation can be run via
+: source run.sh
+
+Further analysis on this network was not done, however.
+
 
 
 ** Acknowledgements

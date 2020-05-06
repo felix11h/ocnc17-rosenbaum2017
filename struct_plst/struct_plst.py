@@ -69,9 +69,8 @@ was_active_before = active
 active = int(active==1) * int(should_stay_active) + int(active==0) * int(should_become_active)'''
 
 
-print 'Weights are not inserted at insertion weight yet! Fix this before doing anything else!'
-insertion_mech=
-'''
+print('Weights are not inserted at insertion weight yet! Fix this before doing anything else!')
+insertion_mech='''
 w = w*was_active_before*active + w_insertion*was_not_active_before*active 
 '''
 
@@ -85,10 +84,10 @@ NIrcr = NeuronGroup(Ni, model, method=method,
                     refractory='ref', name='NIrcr')
 
 
-NErcr.x = 'i / re_nrows'
+NErcr.x = 'i // re_nrows'
 NErcr.y = 'i % re_nrows'
 
-NIrcr.x = 'i / ri_nrows' 
+NIrcr.x = 'i // ri_nrows' 
 NIrcr.y = 'i % ri_nrows'
 
 NErcr.ref  = ref_e
@@ -140,12 +139,11 @@ NErcr.V = np.random.uniform(V_re, V_th, size=Ne)*mV
 NIrcr.V = np.random.uniform(V_re, V_th, size=Ni)*mV
 
 
-print(scheduling_summary())
+# print(scheduling_summary())
 
 run(T, report='text')
 device.build(directory=None) #needs directory argument?
 
-print(profiling_summary())
 
 state = {# 'NErcr' : NErcr.get_states(['x','y']),
          # 'NIrcr' : NIrcr.get_states(['x','y']),
@@ -163,8 +161,7 @@ state = {# 'NErcr' : NErcr.get_states(['x','y']),
          # 'FSPK'  : FSPKrec.get_states()
 }
 
-import cPickle as pickle
-import os
+import os, pickle
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
 fname = "struct_plst_{:s}_arec{:.2f}_affwd{:.2f}_N{:d}_T{:d}ms_test".format(param_set, a_rec, a_ffwd, N, int(T/ms)) 
