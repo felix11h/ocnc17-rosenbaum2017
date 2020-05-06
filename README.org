@@ -44,6 +44,24 @@ In ~ffwd_rec/img/~ the following output is expected
 #+html: <p align="center"><img src="https://github.com/felix11h/ocnc17-rosenbaum2017/blob/master/ffwd_rec/img/collated_preview.png" /></p>
 
 
+*** Plastic feedforward-recurrent network 
+In ~plst_net~ the model of Rosenbaum et al. (2017) is extended to include spike-timing dependent plasticity (STDP) and homeostatic plasticity.
+
+Run the simulation via
+: source run.sh
+
+In ~plst_net/img/~ the following output is expected
+#+html: <p align="center"><img src="https://github.com/felix11h/ocnc17-rosenbaum2017/blob/master/plst_net/img/collated_preview.png" /></p>
+
+
+
+*** Structurally plastic feedforward-recurrent network 
+
+
+** Acknowledgements
+
+Many thanks go to Marcel Stimberg who supervised and gave much helpful input to this project during the summer school.
+
 
 
 

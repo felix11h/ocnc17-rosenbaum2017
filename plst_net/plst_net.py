@@ -14,6 +14,9 @@ globals().update(params.__dict__)
 # directory argument for multiprocessing: directory=None
 set_device('cpp_standalone', directory=None, build_on_run=False)
 
+seed(1234)
+np.random.seed(1234)
+
 # prefs.codegen.target = 'auto' (default) Order: 1. Weave, 2. Cython 3. Numpy
 # Don't use Weave!
 
@@ -70,10 +73,10 @@ NIrcr = NeuronGroup(Ni, model, method=method,
                     refractory='ref', name='NIrcr')
 
 
-NErcr.x = 'i / re_nrows'
+NErcr.x = 'i // re_nrows'
 NErcr.y = 'i % re_nrows'
 
-NIrcr.x = 'i / ri_nrows' 
+NIrcr.x = 'i // ri_nrows' 
 NIrcr.y = 'i % ri_nrows'
 
 NErcr.ref  = ref_e
@@ -154,7 +157,7 @@ NIrcr.V = np.random.uniform(V_re, V_th, size=Ni)*mV
 
 
 # check custom stuff
-print(scheduling_summary())
+# print(scheduling_summary())
 
 run(T, report='text')
 device.build() #needs directory argument?
@@ -177,8 +180,7 @@ state = {'NErcr' : NErcr.get_states(['x','y']),
          # 'FSPK'  : FSPKrec.get_states()
 }
 
-import cPickle as pickle
-import os
+import os, pickle
 pyname = os.path.splitext(os.path.basename(__file__))[0]
 
 fname = "plst_net_{:s}_arec{:.2f}_affwd{:.2f}_N{:d}_T{:d}ms_stdphom_selfrm".format(param_set, a_rec, a_ffwd, N, int(T/ms)) 

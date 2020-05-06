@@ -11,14 +11,9 @@ from utils import get_spks
 import pickle,sys
 
 
-if sys.argv[1]=='large':
-    fname005 = "rb_arec0.05_N50000_T10000ms"
-    fname025 = "rb_arec0.25_N50000_T10000ms"
-    mode = 'large'
-else:
-    fname005 = "plst_net_red_arec0.05_N4993_T50000ms_scaling"
-    fname025 = "plst_net_red_arec0.25_N4993_T50000ms_scaling"
-    mode = 'small'
+fname005 = "plst_net_red_arec0.05_affwd0.10_N4993_T50000ms_stdphom_selfrm"
+fname025 = "plst_net_red_arec0.25_affwd0.10_N4993_T50000ms_stdphom_selfrm"
+mode = ''
     
 matplotlib.rc('text', usetex=True)
 pl.rcParams['text.latex.preamble'] = [
@@ -29,10 +24,10 @@ pl.rcParams['text.latex.preamble'] = [
     r'\sisetup{detect-all}',    
 ]  
 
-with open('../data/'+fname025+'.p', 'rb') as pfile:
+with open('data/'+fname025+'.p', 'rb') as pfile:
     state025 = pickle.load(pfile)
 
-with open('../data/'+fname005+'.p', 'rb') as pfile:
+with open('data/'+fname005+'.p', 'rb') as pfile:
     state005 = pickle.load(pfile)
 
 
@@ -96,7 +91,7 @@ ax[1].set_ylabel('index i')
 ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
 
 pl.tight_layout()
-fig.savefig('raster_rnd_{:s}.png'.format(mode), dpi=300)
+fig.savefig('img/raster_rnd.png', dpi=300)
 
 
 
@@ -158,4 +153,4 @@ ax[1].set_ylabel('index i')
 ax[1].set_title(r'$\alpha_{\mathrm{rec}} = 0.25$')
 
 pl.tight_layout()
-fig.savefig('raster_firstN_{:s}.png'.format(mode), dpi=300)
+fig.savefig('img/raster_firstN.png', dpi=300)

@@ -7,30 +7,29 @@ import matplotlib.pyplot as pl
 import numpy as np
 from brian2.units import *
 
-import cPickle as pickle
-import sys
+import sys, pickle
 
 
-# with open('../data/plst_net_red_arec0.05_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
-#     st005_010 = pickle.load(pfile)
-#     st005_010.update({'a_rec': 0.05, 'a_ffwd': 0.10})
-# with open('../data/plst_net_red_arec0.25_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
-#     st025_010 = pickle.load(pfile)
-#     st025_010.update({'a_rec': 0.25, 'a_ffwd': 0.10})
+with open('data/plst_net_red_arec0.05_affwd0.10_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+    st005_010 = pickle.load(pfile)
+    st005_010.update({'a_rec': 0.05, 'a_ffwd': 0.10})
+with open('data/plst_net_red_arec0.25_affwd0.10_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+    st025_010 = pickle.load(pfile)
+    st025_010.update({'a_rec': 0.25, 'a_ffwd': 0.10})
 
-with open('../data/plst_net_red_arec0.10_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+with open('data/plst_net_red_arec0.10_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
     st010_020 = pickle.load(pfile)
     st010_020.update({'a_rec': 0.10, 'a_ffwd': 0.20})
-with open('../data/plst_net_red_arec0.50_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+with open('data/plst_net_red_arec0.50_affwd0.20_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
     st050_020 = pickle.load(pfile)
     st050_020.update({'a_rec': 0.50, 'a_ffwd': 0.20})
     
-# with open('../data/plst_net_red_arec0.10_affwd0.15_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
-#     st010_015 = pickle.load(pfile)
-#     st010_015.update({'a_rec': 0.10, 'a_ffwd': 0.15})
-# with open('../data/plst_net_red_arec0.30_affwd0.15_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
-#     st030_015 = pickle.load(pfile)
-#     st030_015.update({'a_rec': 0.30, 'a_ffwd': 0.15})
+with open('data/plst_net_red_arec0.10_affwd0.15_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+    st010_015 = pickle.load(pfile)
+    st010_015.update({'a_rec': 0.10, 'a_ffwd': 0.15})
+with open('data/plst_net_red_arec0.30_affwd0.15_N4993_T50000ms_stdphom_selfrm.p', 'rb') as pfile:
+    st030_015 = pickle.load(pfile)
+    st030_015.update({'a_rec': 0.30, 'a_ffwd': 0.15})
 
     
 matplotlib.rc('text', usetex=True)
@@ -75,8 +74,9 @@ def make_figure(sets, fname):
     ax.yaxis.set_ticks_position('left')
     ax.xaxis.set_ticks_position('bottom')
 
-    pl.tight_layout()
-    fig.savefig('weight_dist_{:s}.png'.format(fname), dpi=300) #bbox_inches='tight')
+    fig.tight_layout()
+    fig.savefig('img/weight_dist_{:s}.png'.format(fname), dpi=300)
+
 
 
 
